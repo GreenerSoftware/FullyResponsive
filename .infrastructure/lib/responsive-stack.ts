@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
   Cognito, BuildsBucket, QueueFunction, WebRoutes, ZipFunction, githubActions,
+  PrivateBucket,
 } from '@scloud/cdk-patterns';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Function } from 'aws-cdk-lib/aws-lambda';
@@ -9,6 +10,8 @@ import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import * as path from 'path';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 function envVar(name: string, fallback?: string): string {
@@ -34,6 +37,12 @@ export default class ResponsiveStack extends cdk.Stack {
     // This is useful because updating a Lambda function in the infrastructure might set the Lambda code to a default placeholder.
     // Having a bucket to store the code in means we can update the Lambda function to use the code, either here in the infrastructure build, or from the Github Actions build.
     const builds = new BuildsBucket(this)
+
+    // Bucket to back up infrastructure build inputs/outputs
+    new BucketDeployment(this, 'secretsDeployment', {
+      destinationBucket: PrivateBucket.expendable(this, 'secrets'),
+      sources: [Source.asset(path.join(__dirname, '../secrets'))],
+    });
 
     // An optional queue for sending notifications to Slack
     const slackQueue = this.slack();
