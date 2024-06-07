@@ -45,10 +45,10 @@ export default class ResponsiveStack extends cdk.Stack {
     });
 
     // An optional queue for sending notifications to Slack
-    const slackQueue = this.slack();
+    //const slackQueue = this.slack();
 
     // Cognito authentication
-    const cognito = this.cognito();
+    //const cognito = this.cognito();
 
     // Example bucket
     const aBucket = new Bucket(this, 'bucket', {
@@ -89,7 +89,7 @@ export default class ResponsiveStack extends cdk.Stack {
     // * API_LAMBDA - the name of the Lambda function to update when deploying the API
     // * CLOUDFRONT_BUCKET - for uploading the frontend
     // * CLOUDFRONT_DISTRIBUTIONID - for invalidating the Cloudfront cache
-    const api = this.api(cognito, builds, aBucket, aTable, slackQueue);
+    const api = this.api(builds, aBucket, aTable);
     WebRoutes.routes(this, 'cloudfront', { '/api/*': api }, {
       zone,
       domainName: envVar('DOMAIN_NAME'),
@@ -152,17 +152,17 @@ export default class ResponsiveStack extends cdk.Stack {
   }
 
   api(
-    cognito: Cognito,
+    //cognito: Cognito,
     builds: Bucket,
     aBucket: Bucket,
     aTable: Table,
-    slackQueue: Queue,
+   // slackQueue: Queue,
   ): Function {
     // Lambda for the Node API
     const api = ZipFunction.node(this, 'api', {
       environment: {
-        SIGNIN_URL: cognito.signInUrl(),
-        SLACK_QUEUE_URL: slackQueue.queueUrl,
+        //SIGNIN_URL: cognito.signInUrl(),
+      //  SLACK_QUEUE_URL: slackQueue.queueUrl,
         BUCKET: aBucket.bucketName,
         TABLE: aTable.tableName,
       },
@@ -174,7 +174,7 @@ export default class ResponsiveStack extends cdk.Stack {
 
     aBucket.grantReadWrite(api);
     aTable.grantReadWriteData(api);
-    slackQueue.grantSendMessages(api);
+   // slackQueue.grantSendMessages(api);
 
     return api;
   }
