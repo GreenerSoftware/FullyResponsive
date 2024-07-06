@@ -1,13 +1,13 @@
 // import * as cdk from 'aws-cdk-lib';
 // import { Template } from 'aws-cdk-lib/assertions';
-// import * as Responsive from '../lib/responsive-stack';
+// import * as Fullyresponsive from '../lib/fullyresponsive-stack';
 
 // example test. To run these tests, uncomment this file along with the
-// example resource in lib/responsive-stack.ts
+// example resource in lib/fullyresponsive-stack.ts
 test('SQS Queue Created', () => {
 //   const app = new cdk.App();
 //     // WHEN
-//   const stack = new Responsive.ResponsiveStack(app, 'MyTestStack');
+//   const stack = new Fullyresponsive.FullyresponsiveStack(app, 'MyTestStack');
 //     // THEN
 //   const template = Template.fromStack(stack);
 

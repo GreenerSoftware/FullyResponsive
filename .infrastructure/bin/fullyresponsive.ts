@@ -2,10 +2,10 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { Tags } from 'aws-cdk-lib';
-import ResponsiveStack from '../lib/responsive-stack';
+import FullyresponsiveStack from '../lib/fullyresponsive-stack';
 
 const app = new cdk.App();
-const stack = new ResponsiveStack(app, 'Responsive', {
+const stack = new FullyresponsiveStack(app, 'Fullyresponsive', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */

@@ -21,7 +21,7 @@ echo "Starting infrastructure build: $(date)"
 # cdk bootstrap
 
 # Lint
-# npm run lint
+npm run lint
 
 # Show differences
 cdk diff
