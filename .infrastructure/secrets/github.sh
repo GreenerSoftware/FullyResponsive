@@ -1,4 +1,1 @@
-export USERNAME=myusername
 export PERSONAL_ACCESS_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxx
-export OWNER=myorg
-export REPO=fullyresponsive

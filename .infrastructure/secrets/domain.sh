@@ -1,2 +1,0 @@
-export DOMAIN_NAME=fullyresponsive.greenersoftware.net
-export ZONE_ID=Z06584811PPY6JR34ZMMO
