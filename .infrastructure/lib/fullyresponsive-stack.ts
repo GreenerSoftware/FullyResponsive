@@ -18,7 +18,7 @@ const DOMAIN_NAME = 'fullyresponsive.greenersoftware.net';
 const ZONE_ID = 'Z06584811PPY6JR34ZMMO';
 
 // Github - set in secrets/github.sh
-// const OWNER = 'greenersoftware';
+// const OWNER = 'GreenerSoftware';
 // const REPO = 'fullyresponsive';
 
 function env(key: string): string {
