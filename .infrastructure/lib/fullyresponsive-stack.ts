@@ -62,6 +62,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
         memorySize: 3008,
         code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
       },
+      handler: 'lambda.handler',
     });
 
     // Set up OIDC access from Github Actions - this enables builds to deploy updates to the infrastructure
