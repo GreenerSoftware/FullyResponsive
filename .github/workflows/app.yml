@@ -25,8 +25,8 @@ jobs:
     env:
       buildsBucket: ${{ vars.BUILDS_BUCKET }}
       lambdaName: ${{ vars.APP_LAMBDA }}
-      bucket: ${{ vars.CLOUDFRONT_BUCKET }}
-      distributionId: ${{ vars.CLOUDFRONT_DISTRIBUTIONID }}
+      bucket: ${{ vars.APP_BUCKET }}
+      distributionId: ${{ vars.APP_DISTRIBUTIONID }}
 
     steps:
 
