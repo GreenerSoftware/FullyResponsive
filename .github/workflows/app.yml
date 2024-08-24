@@ -41,6 +41,7 @@ jobs:
       working-directory: ${{ github.workflow }}
       run: |
         # Based on the Dockerfile in the /app component directory
+        nvm use 20
         npm ci
         npm run build
         npm prune --production
