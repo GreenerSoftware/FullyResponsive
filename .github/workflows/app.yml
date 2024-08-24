@@ -65,7 +65,9 @@ jobs:
         aws s3 sync --delete assets s3://${bucket}/
 
         # Assets from frontend libraries:
-        cd dist/node_modules
+        cd dist
+        pwd
+        ls -1
         aws s3 sync --delete govuk-frontend s3://${bucket}/
         aws s3 sync --delete naturescot-frontend s3://${bucket}/
 
