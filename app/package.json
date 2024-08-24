@@ -34,12 +34,14 @@
     "test:a11y:run": "cypress run --config-file cypress.a11y.config.ts",
     "test:a11y": "UNDER_TEST=true start-server-and-test start:mock:mock-model http://localhost:3305/deer-return/health test:a11y:run",
     "test": "npm run test:unit && npm run test:e2e && npm run test:a11y",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "package": "cd dist && zip -r function.zip ."
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@naturescot/licensing-upload-utils": "^0.1.9",
+    "@types/aws-lambda": "^8.10.143",
     "@types/hapi": "^18.0.14",
     "@types/hapi__yar": "^10.1.6",
     "@types/jsonwebtoken": "^9.0.5",
