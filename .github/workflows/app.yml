@@ -51,9 +51,11 @@ jobs:
       working-directory: ${{ github.workflow }}
       run: |
         # app assets
-        cp -r node_modules/govuk-frontend assets/
-        cp -r node_modules/naturescot-frontend assets/
-        aws s3 sync --delete assets s3://${bucket}/
+        mkdir deer-return
+        cp -r assets deer-return/
+        cp -r node_modules/govuk-frontend deer-return/
+        cp -r node_modules/naturescot-frontend deer-return/
+        aws s3 sync --delete deer-return s3://${bucket}/deer-return/
 
     - name: Package
       working-directory: ${{ github.workflow }}
