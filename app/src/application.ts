@@ -12,7 +12,7 @@ import { type ApplicationConfig } from './application-config';
 import { pages } from './pages';
 
 // Start up our micro-app.
-const application = async (configx: ApplicationConfig) => {
+const application = async (config: ApplicationConfig) => {
   const server = Hapi.server({
     port: 3305,
     host: '0.0.0.0',
