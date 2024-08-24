@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-types */
+
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
-  BuildsBucket, WebRoutes, ZipFunction, githubActions,
+  BuildsBucket, WebApp, ZipFunction, githubActions,
 } from '@scloud/cdk-patterns';
-import { Function } from 'aws-cdk-lib/aws-lambda';
+import { Code, Function } from 'aws-cdk-lib/aws-lambda';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 // import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
@@ -70,16 +70,16 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // * API_LAMBDA - the name of the Lambda function to update when deploying the API
     // * CLOUDFRONT_BUCKET - for uploading the frontend
     // * CLOUDFRONT_DISTRIBUTIONID - for invalidating the Cloudfront cache
-    const app = this.app(builds);
-    const api = this.api(builds);
-    WebRoutes.routes(this, 'cloudfront', { '/deer-return*': app, '/deer-api/v1*': api }, {
-      zone,
-      domainName: DOMAIN_NAME,
-      defaultIndex: false,
-      redirectWww: true,
-      // distributionProps: {
-      //   defaultBehavior: defaultBehavior as cloudfront.BehaviorOptions,
-      // },
+    WebApp.node(this, 'app', zone, DOMAIN_NAME, false, false, {
+      environment: {
+        DEER_API_URL: `https://${DOMAIN_NAME}/deer-api/v1`,
+        DEER_HOST_PREFIX: `https://${DOMAIN_NAME}`,
+        DEER_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
+      },
+      functionProps: {
+        memorySize: 3008,
+        code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
+      },
     });
 
     // Set up OIDC access from Github Actions - this enables builds to deploy updates to the infrastructure
@@ -103,42 +103,5 @@ export default class FullyresponsiveStack extends cdk.Stack {
     return new HostedZone(this, 'zone', {
       zoneName,
     });
-  }
-
-  app(
-    builds: Bucket,
-  ): Function {
-    // Lambda for the Node app
-    const app = ZipFunction.node(this, 'app', {
-      environment: {
-        DEER_API_URL: `https://${DOMAIN_NAME}/deer-api/v1`,
-        DEER_HOST_PREFIX: `https://${DOMAIN_NAME}`,
-        DEER_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
-      },
-      functionProps: {
-        memorySize: 3008,
-        // code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
-      },
-    });
-    console.log(builds.bucketName); // TEMP to pass linting
-
-    return app;
-  }
-
-  api(
-    builds: Bucket,
-  ): Function {
-    // Lambda for the Node API
-    const api = ZipFunction.node(this, 'api', {
-      environment: {
-      },
-      functionProps: {
-        memorySize: 3008,
-        // code: Code.fromBucket(builds, 'api.zip'), // This can be uncommented once you've run a build of the api code
-      },
-    });
-    console.log(builds.bucketName); // TEMP to pass linting
-
-    return api;
   }
 }
