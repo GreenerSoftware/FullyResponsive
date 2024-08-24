@@ -48,12 +48,9 @@ jobs:
       working-directory: ${{ github.workflow }}
       run: |
         # app assets
+        cp -r node_modules/govuk-frontend assets/
+        cp -r node_modules/naturescot-frontend assets/
         aws s3 sync --delete assets s3://${bucket}/
-
-        # Assets from frontend libraries:
-        cd node_modules
-        aws s3 sync --delete govuk-frontend s3://${bucket}/
-        aws s3 sync --delete naturescot-frontend s3://${bucket}/
 
     - name: Package
       working-directory: ${{ github.workflow }}
