@@ -59,6 +59,8 @@ jobs:
     - name: Upload assets to s3
       working-directory: ${{ github.workflow }}
       run: |
+        pwd
+        ls -1
         # app assets
         aws s3 sync --delete assets s3://${bucket}/
 
