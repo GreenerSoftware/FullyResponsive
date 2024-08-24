@@ -34,6 +34,9 @@ const routes: Routes = {
 export default routes;
 
 
+///// Code to be translated /////
+
+
 import { readdir } from 'node:fs/promises';
 // Required to stand up the server.
 import * as Hapi from '@hapi/hapi';
