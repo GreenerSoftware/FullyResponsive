@@ -1,4 +1,4 @@
-import {readdir} from 'node:fs/promises';
+import { readdir } from 'node:fs/promises';
 // Required to stand up the server.
 import * as Hapi from '@hapi/hapi';
 // Session storage.
@@ -8,11 +8,11 @@ import * as Vision from '@hapi/vision';
 import * as Nunjucks from 'nunjucks';
 // Allow static file serving.
 import * as Inert from '@hapi/inert';
-import {type ApplicationConfig} from './application-config';
-import {pages} from './pages';
+import { type ApplicationConfig } from './application-config';
+import { pages } from './pages';
 
 // Start up our micro-app.
-const application = async (config: ApplicationConfig) => {
+const application = async (configx: ApplicationConfig) => {
   const server = Hapi.server({
     port: 3305,
     host: '0.0.0.0',
@@ -40,7 +40,7 @@ const application = async (config: ApplicationConfig) => {
 
   const getDirectories = async (source: string) => {
     try {
-      const directories = await readdir(source, {withFileTypes: true});
+      const directories = await readdir(source, { withFileTypes: true });
       return directories
         .filter((dirent) => {
           return dirent.isDirectory();
@@ -59,15 +59,15 @@ const application = async (config: ApplicationConfig) => {
   const viewsConfig: Vision.ServerViewsConfiguration = {
     engines: {
       njk: {
-        compile(template: string, options: {environment: Nunjucks.Environment | undefined}) {
+        compile(template: string, options: { environment: Nunjucks.Environment | undefined; }) {
           const njk = Nunjucks.compile(template, options.environment);
           return (context: any) => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return njk.render(context);
           };
         },
-        prepare(config: {path: string; compileOptions: {environment: Nunjucks.Environment | undefined}}, next) {
-          const njkEnvironment = Nunjucks.configure(config.path, {watch: false});
+        prepare(config: { path: string; compileOptions: { environment: Nunjucks.Environment | undefined; }; }, next) {
+          const njkEnvironment = Nunjucks.configure(config.path, { watch: false });
           config.compileOptions.environment = njkEnvironment;
           next();
         },
@@ -94,7 +94,7 @@ const application = async (config: ApplicationConfig) => {
     method: 'GET',
     path: `${config.pathPrefix}/health`,
     handler() {
-      return {message: 'OK'};
+      return { message: 'OK' };
     },
     options: {
       auth: false,
@@ -156,4 +156,4 @@ const application = async (config: ApplicationConfig) => {
   console.log(`Server listening on http://localhost:3305/deer-return`);
 };
 
-export {application};
+export { application };
