@@ -39,7 +39,6 @@
     "@aws-sdk/lib-dynamodb": "*",
     "@scloud/lambda-api": "*",
     "@scloud/lambda-fileupload": "*",
-    "@scloud/lambda-local": "*",
     "@scloud/s3": "*",
     "axios": "*",
     "jsonwebtoken": "*",

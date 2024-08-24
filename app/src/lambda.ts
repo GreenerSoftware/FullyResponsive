@@ -6,7 +6,6 @@ import {
 } from 'aws-lambda';
 import { apiHandler } from '@scloud/lambda-api';
 import { Request, Response } from '@scloud/lambda-api/dist/types';
-import { webappLocal } from '@scloud/lambda-local';
 import routes from './routes';
 import { slackLog } from './helpers/slack';
 
@@ -28,9 +27,3 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
   }
 }
 
-// Used when running the function locally via 'local.sh'
-(async () => {
-  if (process.argv.includes('--local')) {
-    webappLocal(handler);
-  }
-})();
