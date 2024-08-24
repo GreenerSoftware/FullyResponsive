@@ -50,9 +50,9 @@ jobs:
     - name: Dependencies
       working-directory: ${{ github.workflow }}
       run: |
-        cp package.json dist/
+        cp package*.json dist/
         cd dist/
-        npm ci --production
+        npm ci --omit=dev
 
     - name: Upload assets to s3
       working-directory: ${{ github.workflow }}
@@ -67,7 +67,6 @@ jobs:
     - name: Package
       working-directory: ${{ github.workflow }}
       run: |
-        # npm prune --production
         npm run package
 
     - name: Update function code
