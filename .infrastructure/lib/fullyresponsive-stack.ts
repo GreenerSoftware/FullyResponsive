@@ -2,11 +2,10 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
-  BuildsBucket, WebApp, ZipFunction, githubActions,
+  BuildsBucket, WebApp, githubActions,
 } from '@scloud/cdk-patterns';
-import { Code, Function } from 'aws-cdk-lib/aws-lambda';
+import { Code } from 'aws-cdk-lib/aws-lambda';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
 // import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 
 // Credentials
@@ -44,26 +43,6 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // This is useful because updating a Lambda function in the infrastructure might set the Lambda code to a default placeholder.
     // Having a bucket to store the code in means we can update the Lambda function to use the code, either here in the infrastructure build, or from the Github Actions build.
     const builds = new BuildsBucket(this);
-
-    // Bucket to back up infrastructure build inputs/outputs
-    // This is useful for backup and for sharing build inputs between developers, but is commentsed out by default
-    // So you son't upload anything to s3 without explicity deciding this is something that's useful for you.
-    // The imports this needs are also commented out by default and you'll need PrivateBucket added to the @scloud/cdk-patterns import.
-    // new BucketDeployment(this, 'secretsDeployment', {
-    //   destinationBucket: PrivateBucket.expendable(this, 'secrets'),
-    //   sources: [Source.asset(path.join(__dirname, '../secrets'))],
-    // });
-
-    // Cloudfront function association:
-    // const defaultBehavior: Partial<cloudfront.BehaviorOptions> = {
-    //   functionAssociations: [{
-    //     function: new cloudfront.Function(this, 'staticURLs', {
-    //       code: cloudfront.FunctionCode.fromFile({ filePath: './lib/cfFunction.js' }),
-    //       comment: 'Rewrite static URLs to .html so they get forwarded to s3',
-    //     }),
-    //     eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
-    //   }],
-    // };
 
     // Create the frontend and API using Cloudfront
     // The following calls will create variables in Github Actions that can be used to deploy the frontend and API:
