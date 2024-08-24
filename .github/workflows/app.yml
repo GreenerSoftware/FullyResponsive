@@ -42,20 +42,8 @@ jobs:
       run: |
         # Based on the Dockerfile in the /app component directory
         nvm use 20
-        npm ci
+        npm i
         npm run build
-        npm prune --production
-
-    - name: Package
-      working-directory: ${{ github.workflow }}
-      run: |
-        npm run package
-
-    - name: Update function code
-      working-directory: ${{ github.workflow }}
-      run: |
-        aws s3 cp dist/function.zip s3://${{ env.buildsBucket }}/${{ github.workflow }}.zip
-        aws lambda update-function-code --function-name=${{ env.lambdaName }} --s3-bucket ${{ env.buildsBucket }} --s3-key ${{ github.workflow }}.zip
 
     - name: Upload assets to s3
       working-directory: ${{ github.workflow }}
@@ -69,8 +57,21 @@ jobs:
         cd dist
         pwd
         ls -1
+        cd node_modules
         aws s3 sync --delete govuk-frontend s3://${bucket}/
         aws s3 sync --delete naturescot-frontend s3://${bucket}/
+
+    - name: Package
+      working-directory: ${{ github.workflow }}
+      run: |
+        npm prune --production
+        npm run package
+
+    - name: Update function code
+      working-directory: ${{ github.workflow }}
+      run: |
+        aws s3 cp dist/function.zip s3://${{ env.buildsBucket }}/${{ github.workflow }}.zip
+        aws lambda update-function-code --function-name=${{ env.lambdaName }} --s3-bucket ${{ env.buildsBucket }} --s3-key ${{ github.workflow }}.zip
 
     - name: Invalidate Cloudfront
       working-directory: ${{ github.workflow }}
