@@ -37,13 +37,19 @@ jobs:
         role-to-assume: ${{ vars.GHA_OIDC_ROLE }}
         aws-region: eu-west-2
 
+    - name: Set up nvm
+      working-directory: ${{ github.workflow }}
+      run: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+        nvm install 20
+        nvm use 20
+
     - name: Build
       working-directory: ${{ github.workflow }}
       run: |
         # Based on the Dockerfile in the /app component directory
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-        nvm install 20
-        nvm use 20
         npm i
         npm run build
 
