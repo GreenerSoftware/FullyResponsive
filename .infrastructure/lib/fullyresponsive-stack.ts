@@ -70,8 +70,9 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // * API_LAMBDA - the name of the Lambda function to update when deploying the API
     // * CLOUDFRONT_BUCKET - for uploading the frontend
     // * CLOUDFRONT_DISTRIBUTIONID - for invalidating the Cloudfront cache
+    const app = this.app(builds);
     const api = this.api(builds);
-    WebRoutes.routes(this, 'cloudfront', { '/api/*': api }, {
+    WebRoutes.routes(this, 'cloudfront', { '/deer-return*': app, '/deer-api/v1*': api }, {
       zone,
       domainName: DOMAIN_NAME,
       defaultIndex: true,
@@ -104,6 +105,26 @@ export default class FullyresponsiveStack extends cdk.Stack {
     });
   }
 
+  app(
+    builds: Bucket,
+  ): Function {
+    // Lambda for the Node app
+    const app = ZipFunction.node(this, 'app', {
+      environment: {
+        DEER_API_URL: `https://${DOMAIN_NAME}/deer-api/v1`,
+        DEER_HOST_PREFIX: `https://${DOMAIN_NAME}`,
+        DEER_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
+      },
+      functionProps: {
+        memorySize: 3008,
+        // code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
+      },
+    });
+    console.log(builds.bucketName); // TEMP to pass linting
+
+    return app;
+  }
+
   api(
     builds: Bucket,
   ): Function {
@@ -113,7 +134,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
       },
       functionProps: {
         memorySize: 3008,
-        // code: Code.fromBucket(builds, 'api.zip'), // This can be uncommented once you've run a build of the API code
+        // code: Code.fromBucket(builds, 'api.zip'), // This can be uncommented once you've run a build of the api code
       },
     });
     console.log(builds.bucketName); // TEMP to pass linting
