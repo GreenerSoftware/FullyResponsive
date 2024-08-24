@@ -7,7 +7,7 @@ import {
 import { Function } from 'aws-cdk-lib/aws-lambda';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+// import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 
 // Credentials
 // PERSONAL_ACCESS_TOKEN - create a Github personal access token (classic) with 'repo' scope and set this in .infrastructure/secrets/github.sh using export PERSONAL_ACCESS_TOKEN=ghp_...
@@ -55,15 +55,15 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // });
 
     // Cloudfront function association:
-    const defaultBehavior: Partial<cloudfront.BehaviorOptions> = {
-      functionAssociations: [{
-        function: new cloudfront.Function(this, 'staticURLs', {
-          code: cloudfront.FunctionCode.fromFile({ filePath: './lib/cfFunction.js' }),
-          comment: 'Rewrite static URLs to .html so they get forwarded to s3',
-        }),
-        eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
-      }],
-    };
+    // const defaultBehavior: Partial<cloudfront.BehaviorOptions> = {
+    //   functionAssociations: [{
+    //     function: new cloudfront.Function(this, 'staticURLs', {
+    //       code: cloudfront.FunctionCode.fromFile({ filePath: './lib/cfFunction.js' }),
+    //       comment: 'Rewrite static URLs to .html so they get forwarded to s3',
+    //     }),
+    //     eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+    //   }],
+    // };
 
     // Create the frontend and API using Cloudfront
     // The following calls will create variables in Github Actions that can be used to deploy the frontend and API:
@@ -75,11 +75,11 @@ export default class FullyresponsiveStack extends cdk.Stack {
     WebRoutes.routes(this, 'cloudfront', { '/deer-return*': app, '/deer-api/v1*': api }, {
       zone,
       domainName: DOMAIN_NAME,
-      defaultIndex: true,
+      defaultIndex: false,
       redirectWww: true,
-      distributionProps: {
-        defaultBehavior: defaultBehavior as cloudfront.BehaviorOptions,
-      },
+      // distributionProps: {
+      //   defaultBehavior: defaultBehavior as cloudfront.BehaviorOptions,
+      // },
     });
 
     // Set up OIDC access from Github Actions - this enables builds to deploy updates to the infrastructure
