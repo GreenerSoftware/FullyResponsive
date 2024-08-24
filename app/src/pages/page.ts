@@ -1,22 +1,21 @@
 import {
   type ServerRoute,
   type Lifecycle,
-  type Utils,
   type Request,
   type RouteOptions,
   type ResponseToolkit,
   type ResponseObject,
 } from '@hapi/hapi';
-import {type RequestQuery} from 'hapi';
-import {ReturnState} from '../return-state';
-import {type ApplicationModel} from '../application-model';
-import {type ApplicationConfig} from '../application-config';
-import {type Controller} from '../controller';
-import {buildQueryParameters} from '../utils/build-query-parameters';
-import {fixQueryParameters} from '../utils/fix-query-parameters';
+import { type RequestQuery } from 'hapi';
+import { ReturnState } from '../return-state';
+import { type ApplicationModel } from '../application-model';
+import { type ApplicationConfig } from '../application-config';
+import { type Controller } from '../controller';
+import { buildQueryParameters } from '../utils/build-query-parameters';
+import { fixQueryParameters } from '../utils/fix-query-parameters';
 import * as pageUrls from './page-urls';
-import {type ViewModel, type Errors} from './view-model';
-import {AllowedPageOverrides} from './allowed-page-overrides';
+import { type ViewModel, type Errors } from './view-model';
+import { AllowedPageOverrides } from './allowed-page-overrides';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -132,7 +131,7 @@ const getViewModel = async (
   errors: Errors | undefined = undefined,
 ): Promise<ViewModel> => {
   const viewModelResult = await parameters.viewModel(request, page, model, parameters.config!, errors);
-  return {...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl};
+  return { ...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl };
 };
 
 /**
@@ -143,7 +142,7 @@ const getViewModel = async (
  * @returns {ResponseObject} Response object.
  */
 const getHandler = async (request: Request, h: ResponseToolkit, handlerParameters: HandlerParameters) => {
-  const {parameters, model, previousPage, previousPages} = handlerParameters;
+  const { parameters, model, previousPage, previousPages } = handlerParameters;
 
   const query = fixQueryParameters(request.query) as RequestQuery;
   // We only have a 'new previous page' if we're going backwards through
@@ -185,7 +184,7 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
   // correct direction.
   try {
     const viewModel: ViewModel = await getViewModel(
-      {...request, query} as Request,
+      { ...request, query } as Request,
       newPreviousPage ?? previousPage,
       parameters,
       model,
@@ -205,11 +204,11 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
  */
 
 const postHandler = async (request: Request, h: ResponseToolkit, handlerParameters: HandlerParameters) => {
-  const {parameters, model, previousPage, previousPages} = handlerParameters;
+  const { parameters, model, previousPage, previousPages } = handlerParameters;
 
   const fixedQueryParameters = fixQueryParameters(request.query);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const fixedRequest: Request = {...request, query: fixedQueryParameters} as Request;
+  const fixedRequest: Request = { ...request, query: fixedQueryParameters } as Request;
 
   const decision = await parameters.controller.handle(fixedRequest, parameters.config);
 
@@ -313,7 +312,7 @@ type CustomHandlers = {
  */
 class Page implements ServerRoute, CustomHandlers {
   path: string;
-  method: Utils.HTTP_METHODS_PARTIAL | Utils.HTTP_METHODS_PARTIAL[];
+  method: ['get', 'post'];// Utils.HTTP_METHODS_PARTIAL | Utils.HTTP_METHODS_PARTIAL[];
   handler?: Lifecycle.Method;
   options?: RouteOptions;
   customPostHandler?: HandlerFunction;
@@ -371,4 +370,4 @@ class Page implements ServerRoute, CustomHandlers {
   }
 }
 
-export {type PageParameters, guardAllows, Page};
+export { type PageParameters, guardAllows, Page };
