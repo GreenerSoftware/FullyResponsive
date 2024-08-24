@@ -71,7 +71,7 @@
     "@hapi/inert": "7.1.0",
     "@hapi/vision": "7.0.3",
     "@hapi/yar": "11.0.1",
-    "@scloud/lambda-api": "^0.2.4",
+    "@scloud/lambda-api": "*",
     "@types/sinon": "^17.0.3",
     "axios": "^1.6.7",
     "govuk-frontend": "^4.8.0",
