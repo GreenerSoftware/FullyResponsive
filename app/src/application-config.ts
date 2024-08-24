@@ -1,5 +1,5 @@
-import {type AxiosStatic} from 'axios';
-import {type ApplicationModel} from './application-model';
+import { type AxiosStatic } from 'axios';
+import { type ApplicationModel } from './application-model';
 
 /**
  * Our injectable configuration object. This is cleaner than doing a run-time
@@ -19,7 +19,7 @@ type ApplicationConfig = {
   /**
    * An instance of Axios or an AxiosMockAdapter for testing purposes.
    */
-  axios: AxiosStatic;
+  axios?: AxiosStatic;
 
   /**
    * The API for posting our completed applications to.
@@ -54,5 +54,5 @@ type ApplicationConfig = {
 };
 const licenceReferencePrefix = 'DEER-';
 
-export type {ApplicationConfig};
-export {licenceReferencePrefix};
+export type { ApplicationConfig };
+export { licenceReferencePrefix };
