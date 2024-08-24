@@ -37,22 +37,6 @@ jobs:
         role-to-assume: ${{ vars.GHA_OIDC_ROLE }}
         aws-region: eu-west-2
 
-    - name: Upload assets to s3
-      working-directory: ${{ github.workflow }}
-      run: |
-        # app assets
-        aws s3 sync --delete assets s3://${bucket}/
-
-        # Assets from frontend libraries:
-        cd node_modules
-        aws s3 sync --delete govuk-frontend s3://${bucket}/
-        aws s3 sync --delete naturescot-frontend s3://${bucket}/
-
-    - name: Invalidate Cloudfront
-      working-directory: ${{ github.workflow }}
-      run: |
-        aws cloudfront create-invalidation --distribution-id $distributionId --paths '/*'
-
     - name: Build
       working-directory: ${{ github.workflow }}
       run: |
@@ -72,3 +56,18 @@ jobs:
         aws s3 cp dist/function.zip s3://${{ env.buildsBucket }}/${{ github.workflow }}.zip
         aws lambda update-function-code --function-name=${{ env.lambdaName }} --s3-bucket ${{ env.buildsBucket }} --s3-key ${{ github.workflow }}.zip
 
+    - name: Upload assets to s3
+      working-directory: ${{ github.workflow }}
+      run: |
+        # app assets
+        aws s3 sync --delete assets s3://${bucket}/
+
+        # Assets from frontend libraries:
+        cd dist/node_modules
+        aws s3 sync --delete govuk-frontend s3://${bucket}/
+        aws s3 sync --delete naturescot-frontend s3://${bucket}/
+
+    - name: Invalidate Cloudfront
+      working-directory: ${{ github.workflow }}
+      run: |
+        aws cloudfront create-invalidation --distribution-id $distributionId --paths '/*'
