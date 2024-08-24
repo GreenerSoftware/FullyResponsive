@@ -75,6 +75,9 @@ export default class FullyresponsiveStack extends cdk.Stack {
         DEER_API_URL: `https://${DOMAIN_NAME}/deer-api/v1`,
         DEER_HOST_PREFIX: `https://${DOMAIN_NAME}`,
         DEER_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
+        // gazetteerApiEndpoint: process.env.PC_LOOKUP_API_URL ?? '',
+        // feedbackUrl: process.env.DEER_FEEDBACK_URL ?? 'https://www.google.com',
+        // underTest: Boolean(process.env.UNDER_TEST),
       },
       functionProps: {
         memorySize: 3008,
