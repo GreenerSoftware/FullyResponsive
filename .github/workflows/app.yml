@@ -48,15 +48,10 @@ jobs:
     - name: Upload assets to s3
       working-directory: ${{ github.workflow }}
       run: |
-        pwd
-        ls -1
         # app assets
         aws s3 sync --delete assets s3://${bucket}/
 
         # Assets from frontend libraries:
-        cd dist
-        pwd
-        ls -1
         cd node_modules
         aws s3 sync --delete govuk-frontend s3://${bucket}/
         aws s3 sync --delete naturescot-frontend s3://${bucket}/
@@ -64,7 +59,7 @@ jobs:
     - name: Package
       working-directory: ${{ github.workflow }}
       run: |
-        npm prune --production
+        # npm prune --production
         npm run package
 
     - name: Update function code
