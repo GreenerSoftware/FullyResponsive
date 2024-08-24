@@ -49,6 +49,8 @@ jobs:
       working-directory: ${{ github.workflow }}
       run: |
         # Based on the Dockerfile in the /app component directory
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
         nvm use 20
         npm i
         npm run build
