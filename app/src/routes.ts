@@ -3,6 +3,16 @@ import { Routes } from '@scloud/lambda-api/dist/types';
 
 const routes: Routes = {
 
+  '/': {
+    GET: async () => ({
+      statusCode: 302,
+      headers: {
+        Location: '/deer-return/',
+      },
+      body: '',
+    })
+  },
+
   '/deer-return/health': {
     GET: async () => ({
       statusCode: 200,
