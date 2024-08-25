@@ -8,7 +8,7 @@ import { apiHandler } from '@scloud/lambda-api';
 import { ContextBuilder, Request, Response } from '@scloud/lambda-api/dist/types';
 import routes from './routes';
 import { slackLog } from './helpers/slack';
-import { sessionGet, sessionSet } from 'helpers/yar';
+import { sessionFlash, sessionGet, sessionSet, unFlash } from 'helpers/yar';
 import { ApplicationConfig } from 'application-config';
 import { env } from 'helpers/util';
 
@@ -29,6 +29,7 @@ async function errorHandler(request: Request, e: Error): Promise<Response> {
 }
 
 const sessionHandler: ContextBuilder = async (request: Request) => {
+  unFlash(request);
   request.context.sessionGet = <T>(key: string): T => {
     return sessionGet(key, request);
   };
@@ -37,7 +38,7 @@ const sessionHandler: ContextBuilder = async (request: Request) => {
     return value;
   };
   request.context.sessionFlash = <T>(response: Response, type?: string, message?: any, isOverride?: boolean): T[] => {
-    return []; // TODO: flash?
+    return sessionFlash(request, response, type, message, isOverride);
   };
 };
 
