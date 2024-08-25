@@ -6,7 +6,7 @@ export function sessionGet(key: string, request: Request) {
   return session[key];
 }
 
-export function sessionPut(key: string, value: any, request: Request, response: Response) {
+export function sessionSet(key: string, value: any, request: Request, response: Response) {
   let data = request.cookies.yar || '{}';
   const session = JSON.parse(data);
   session[key] = value;
