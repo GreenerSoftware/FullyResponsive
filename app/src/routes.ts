@@ -1,34 +1,49 @@
 
 import { Routes } from '@scloud/lambda-api/dist/types';
+import { welcomePage } from 'pages/01-welcome/01-welcome.page';
 
-const routes: Routes = {
 
-  '/': {
-    GET: async () => ({
-      statusCode: 302,
-      headers: {
-        Location: '/deer-return/',
-      },
-      body: '',
-    })
-  },
+export function routes(config: ApplicationConfig): Routes {
+  const { path: welcomePagePath, scloudHandler: welcomePageHandler } = welcomePage(config);
+  return {
+    '/': {
+      GET: async () => ({
+        statusCode: 302,
+        headers: {
+          Location: '/deer-return/',
+        },
+        body: '',
+      })
+    },
 
-  '/deer-return/health': {
-    GET: async () => ({
-      statusCode: 200,
-      body: { message: 'OK' },
-    })
-  },
+    '/deer-return/health': {
+      GET: async () => ({
+        statusCode: 200,
+        body: { message: 'OK' },
+      })
+    },
 
-  '/deer-return': {
-    GET: async () => ({
-      statusCode: 302,
-      headers: {
-        Location: '/deer-return/submit',
-      },
-      body: '',
-    })
-  },
+    '/deer-return': {
+      GET: async () => ({
+        statusCode: 302,
+        headers: {
+          Location: '/deer-return/submit',
+        },
+        body: '',
+      })
+    },
+    '/deer-return/': {
+      GET: async () => ({
+        statusCode: 302,
+        headers: {
+          Location: '/deer-return/submit',
+        },
+        body: '',
+      })
+    },
+
+    [welcomePagePath]: { GET: welcomePageHandler },
+  };
 };
 
 export default routes;
@@ -41,12 +56,12 @@ import { readdir } from 'node:fs/promises';
 // Required to stand up the server.
 import * as Hapi from '@hapi/hapi';
 // Session storage.
-import * as Yar from '@hapi/yar';
+// import * as Yar from '@hapi/yar';
 // Import our template engine.
-import * as Vision from '@hapi/vision';
+// import * as Vision from '@hapi/vision';
 import * as Nunjucks from 'nunjucks';
 // Allow static file serving.
-import * as Inert from '@hapi/inert';
+// import * as Inert from '@hapi/inert';
 import { type ApplicationConfig } from './application-config';
 import { pages } from './pages';
 
@@ -63,19 +78,19 @@ const application = async (config: ApplicationConfig) => {
   });
 
   // Do session cookies.
-  await server.register({
-    plugin: Yar,
-    options: {
-      storeBlank: false,
-      name: 'deer-return',
-      cookieOptions: {
-        password: config.sessionSecret,
-        isSecure: true,
-        path: '/deer-return',
-        isSameSite: 'Strict',
-      },
-    },
-  });
+  // await server.register({
+  //   plugin: Yar,
+  //   options: {
+  //     storeBlank: false,
+  //     name: 'deer-return',
+  //     cookieOptions: {
+  //       password: config.sessionSecret,
+  //       isSecure: true,
+  //       path: '/deer-return',
+  //       isSameSite: 'Strict',
+  //     },
+  //   },
+  // });
 
   const getDirectories = async (source: string) => {
     try {
@@ -125,7 +140,7 @@ const application = async (config: ApplicationConfig) => {
   server.views(viewsConfig);
 
   // Tell hapi that it can serve static files.
-  await server.register(Inert);
+  // await server.register(Inert);
 
   // `health` is a simple health-check end-point to test whether the service is
   // up.
