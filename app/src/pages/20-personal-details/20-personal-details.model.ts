@@ -1,7 +1,7 @@
-import {type Request} from '@hapi/hapi';
-import {type ApplicationModel} from '../../application-model';
-import {type ApplicationConfig} from '../../application-config';
-import {viewModelBuilder, type Errors, type ViewModel} from '../view-model';
+// import { type Request } from '@hapi/hapi';
+import { type ApplicationModel } from '../../application-model';
+import { type ApplicationConfig } from '../../application-config';
+import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 
 interface ApplicantDetailsViewModel extends ViewModel {
   isOnBehalf: boolean | undefined;
@@ -25,14 +25,14 @@ interface ApplicantDetailsViewModel extends ViewModel {
  * @returns {Promise<WelcomeViewModel>} Our built IntroViewModel.
  */
 const whatIsYourEmailViewModelBuilder = async (
-  request: Request,
+  // request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<ApplicantDetailsViewModel> => {
   const applicantDetailsViewModel = (await viewModelBuilder(
-    request,
+    /*request,*/
     backUrl,
     model,
     config,
@@ -47,4 +47,4 @@ const whatIsYourEmailViewModelBuilder = async (
   return applicantDetailsViewModel;
 };
 
-export {whatIsYourEmailViewModelBuilder};
+export { whatIsYourEmailViewModelBuilder };

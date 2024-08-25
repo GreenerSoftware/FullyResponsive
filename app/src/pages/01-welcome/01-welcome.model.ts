@@ -1,7 +1,7 @@
-import {type Request} from '@hapi/hapi';
-import {type ApplicationModel} from '../../application-model';
-import {type ApplicationConfig} from '../../application-config';
-import {viewModelBuilder, type Errors, type ViewModel} from '../view-model';
+import { type Request } from '@hapi/hapi';
+import { type ApplicationModel } from '../../application-model';
+import { type ApplicationConfig } from '../../application-config';
+import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 
 /**
  * We extend the base `ViewModel` to get the `backUrl` field and that's not even
@@ -23,15 +23,15 @@ type WelcomeViewModel = Record<string, unknown> & ViewModel;
  * @returns {Promise<WelcomeViewModel>} Our built IntroViewModel.
  */
 const welcomeViewModelBuilder = async (
-  request: Request,
+  // request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<WelcomeViewModel> => {
-  const viewModel = await viewModelBuilder(request, undefined, model, config, error);
+  const viewModel = await viewModelBuilder(/*request,*/ undefined, model, config, error);
 
   return viewModel;
 };
 
-export {welcomeViewModelBuilder};
+export { welcomeViewModelBuilder };

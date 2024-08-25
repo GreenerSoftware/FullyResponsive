@@ -1,6 +1,6 @@
-import {type Request} from '@hapi/hapi';
-import {type ApplicationModel} from '../application-model';
-import {type ApplicationConfig} from '../application-config';
+// import { type Request } from '@hapi/hapi';
+import { type ApplicationModel } from '../application-model';
+import { type ApplicationConfig } from '../application-config';
 
 type Errors = Record<string, boolean>;
 
@@ -61,7 +61,7 @@ type ViewModel = {
  * @returns {Promise<ViewModel>} Our built `ViewModel`.
  */
 const viewModelBuilder = async (
-  _request: Request,
+  // _request: Request,
   backUrl: string | undefined,
   _model: ApplicationModel,
   _config: ApplicationConfig,
@@ -76,4 +76,4 @@ const viewModelBuilder = async (
   return viewModel;
 };
 
-export {viewModelBuilder, type Errors, type ViewModel};
+export { viewModelBuilder, type Errors, type ViewModel };
