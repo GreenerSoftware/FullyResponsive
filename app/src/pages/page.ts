@@ -16,6 +16,7 @@ import { fixQueryParameters } from '../utils/fix-query-parameters';
 import * as pageUrls from './page-urls';
 import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
+import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -49,7 +50,7 @@ type PageParameters = {
    * page.
    */
   viewModel: (
-    request: Request,
+    // request: Request,
     backUrl: string | undefined,
     model: ApplicationModel,
     config: ApplicationConfig,
@@ -119,6 +120,15 @@ type PageParameters = {
   customGetHandler?: HandlerFunction;
 };
 
+function redirect(location: string): ScloudResponse {
+  return {
+    statusCode: 302,
+    headers: {
+      location,
+    },
+  };
+}
+
 /**
  * The parameters passed to the `getHandler` and `postHandler` functions.
  */
@@ -130,7 +140,22 @@ const getViewModel = async (
   model: ApplicationModel,
   errors: Errors | undefined = undefined,
 ): Promise<ViewModel> => {
-  const viewModelResult = await parameters.viewModel(request, page, model, parameters.config!, errors);
+  const viewModelResult = await parameters.viewModel(/*request,*/ page, model, parameters.config!, errors);
+  return { ...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl };
+};
+
+/**
+ * The parameters passed to the `getHandler` and `postHandler` functions.
+ */
+
+const scloudGetViewModel = async (
+  request: ScloudRequest,
+  page: string,
+  parameters: PageParameters,
+  model: ApplicationModel,
+  errors: Errors | undefined = undefined,
+): Promise<ViewModel> => {
+  const viewModelResult = await parameters.viewModel(/*request,*/ page, model, parameters.config!, errors);
   return { ...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl };
 };
 
@@ -185,6 +210,74 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
   try {
     const viewModel: ViewModel = await getViewModel(
       { ...request, query } as Request,
+      newPreviousPage ?? previousPage,
+      parameters,
+      model,
+    );
+    return h.view(parameters.view, viewModel);
+  } catch (error: unknown) {
+    console.error(error);
+    return h.view('error-500').code(500);
+  }
+};
+
+/**
+ * Generic GET handler for all pages.
+ * @param request Incoming request.
+ * @param {ResponseToolkit} h Response object.
+ * @param {HandlerParameters} handlerParameters The handler parameters.
+ * @returns {ResponseObject} Response object.
+ */
+const scloudGetHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters): ScloudResponse => {
+  const response: ScloudResponse = { statusCode: 200 };
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+  const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => T[];
+  //, h: ResponseToolkit
+  const { parameters, model, previousPage, previousPages } = handlerParameters;
+
+  const query = request.query; // fixQueryParameters(request.query) as RequestQuery;
+
+  // We only have a 'new previous page' if we're going backwards through
+  // the app. An `undefined` value signals we've not got a 'new' one.
+  let newPreviousPage: string | undefined;
+
+  const overRiddenPage = flash(response, 'nextPageOverride');
+  if (overRiddenPage?.length > 0) {
+    const page = overRiddenPage[0] as string;
+
+    if (Object.keys(AllowedPageOverrides).includes(page)) {
+      const finalPage = AllowedPageOverrides[page as keyof typeof AllowedPageOverrides].slice(1);
+      return redirect(finalPage);
+    }
+  }
+
+  // If we're going backwards through the app, we'll need to 'adjust
+  // history'.
+  if (query.action === 'back') {
+    if (query.backPage) {
+      flash(response, 'nextPageOverride', query.backPage);
+
+      delete query.backPage;
+    }
+
+    delete query.action;
+    // const queryParameterString = buildQueryParameters(query as Record<string, string>);
+    const queryParameterString = new URLSearchParams(query).toString();
+    const lastVisitIndex = previousPages.lastIndexOf(`${parameters.path}${queryParameterString}`);
+    const newPreviousPages = [...previousPages.slice(0, lastVisitIndex), ...previousPages.slice(lastVisitIndex + 1)];
+    set('previousPages', newPreviousPages, response);
+    // We'll be rendering the 'already previous' page, so we need to find
+    // out what the 'previous previous' or 'new previous' page is for the
+    // back link.
+    newPreviousPage = newPreviousPages.at(-1);
+  }
+
+  // Render the requested page, using the 'new previous' page if we're
+  // going backwards, or the normal 'previous' page if we're in the
+  // correct direction.
+  try {
+    const viewModel: ViewModel = await scloudGetViewModel(
+      { ...request, query } as ScloudRequest,
       newPreviousPage ?? previousPage,
       parameters,
       model,
@@ -264,6 +357,77 @@ const postHandler = async (request: Request, h: ResponseToolkit, handlerParamete
 };
 
 /**
+ * Generic POST handler for all pages.
+ * @param {Request} request Incoming request.
+ * @param {ResponseToolkit} h Response object.
+ * @param {HandlerParameters} handlerParameters The handler parameters.
+ */
+
+const scloudPostHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters) => {
+  const response: ScloudResponse = { statusCode: 200 };
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+  // , h: ResponseToolkit
+  const { parameters, model, previousPage, previousPages } = handlerParameters;
+
+  // const fixedQueryParameters = fixQueryParameters(request.query);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const fixedRequest = request; // : Request = { ...request, query: fixedQueryParameters } as Request;
+
+  const decision = await parameters.controller.handle(request, parameters.config);
+
+  // If the controller tells us we're broken, check for the errors, then
+  // render the error-ful page.
+  if (decision.state === ReturnState.ValidationError) {
+    const errors = parameters.controller.checkErrors(fixedRequest);
+    const viewModel: ViewModel = await scloudGetViewModel(fixedRequest, previousPage, parameters, model, errors);
+    return h.view(parameters.view, viewModel);
+  }
+
+  if (decision.state === ReturnState.Redirect) {
+    return h.redirect(decision.redirectLink);
+  }
+
+  // If we make it this far, we're OK, so save this page to the list of
+  // previous pages for later.
+
+  // remove the action param
+  delete fixedRequest.query.action;
+
+  // const queryParameterString = buildQueryParameters(fixedRequest.query)
+  const queryParameterString = new URLSearchParams(fixedRequest.query).toString();
+  previousPages.push(`${parameters.path}${queryParameterString}`);
+  set('previousPages', previousPages, response);
+
+  // If our controller handler told us that we were to take the quinary
+  // path, redirect there.
+  if (decision.state === ReturnState.Quinary) {
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`);
+  }
+
+  // If our controller handler told us that we were to take the quaternary
+  // path, redirect there.
+  if (decision.state === ReturnState.Quaternary) {
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`);
+  }
+
+  // If our controller handler told us that we were to take the tertiary
+  // path, redirect there.
+  if (decision.state === ReturnState.Tertiary) {
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`);
+  }
+
+  // If our controller handler told us that we were to take the secondary
+  // path, redirect there.
+  if (decision.state === ReturnState.Secondary) {
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`);
+  }
+
+  // If we made it this far then we've passed all the filters above, so it's
+  // time to move forward!
+  return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`);
+};
+
+/**
  * Determine whether a visitor is allowed to view a page.
  * @param {string[]} previousPages A list of pages the visitor has previously
  * accessed.
@@ -314,6 +478,7 @@ class Page implements ServerRoute, CustomHandlers {
   path: string;
   method: ['get', 'post'];// Utils.HTTP_METHODS_PARTIAL | Utils.HTTP_METHODS_PARTIAL[];
   handler?: Lifecycle.Method;
+  scloudHandler?: (request: ScloudRequest) => Promise<ScloudResponse>;
   options?: RouteOptions;
   customPostHandler?: HandlerFunction;
   customGetHandler?: HandlerFunction;
@@ -364,6 +529,50 @@ class Page implements ServerRoute, CustomHandlers {
       return this.customPostHandler
         ? this.customPostHandler(request, h, handlerParameters)
         : postHandler(request, h, handlerParameters);
+    };
+    this.scloudHandler = async (request: ScloudRequest): Promise<ScloudResponse> => {
+      const get = request.context.sessionGet as <T>(key: string) => T;
+      const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+      const response: ScloudResponse = { statusCode: 200 };
+
+      // Get the model from the visitor's session.
+      let model = (get('applicationModel') ?? {}) as ApplicationModel;
+
+      // If we are mocking, and the session model is empty, give it initial data.
+      if (parameters.config?.mockApplicationModel && Object.keys(model).length === 0) {
+        model = set('applicationModel', parameters.config.mockApplicationModel, response);
+
+        // Set the previous pages in the session to every page that exists in the pageUrls.
+        set('previousPages', Object.values(pageUrls), response);
+      }
+
+      // Grab the list of of previous pages from the visitor's session.
+      const previousPages = (get('previousPages') ?? []) as string[];
+      const previousPage = previousPages.at(-1);
+
+      // If we're not allowed to visit this page, give the visitor a 403 error.
+      if (!guardAllows(previousPages, parameters.guardAllowPrevious)) {
+        return h.view('error-403').code(403);
+      }
+
+      const handlerParameters: HandlerParameters = {
+        parameters,
+        model,
+        previousPage: previousPage!,
+        previousPages,
+      };
+
+      // If we're allowed, and we're just getting the page, build a view-model
+      // and render the view.
+      if (request.method === 'GET') {
+        return this.customGetHandler
+          ? this.customGetHandler(request, h, handlerParameters)
+          : scloudGetHandler(request, handlerParameters);
+      }
+
+      return this.customPostHandler
+        ? this.customPostHandler(request, h, handlerParameters)
+        : scloudPostHandler(request, handlerParameters);
     };
 
     this.options = parameters.options;
