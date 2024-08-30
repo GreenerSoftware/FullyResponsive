@@ -61,7 +61,7 @@ type ViewModel = {
  * @returns {Promise<ViewModel>} Our built `ViewModel`.
  */
 const viewModelBuilder = async (
-  // _request: Request,
+  _request: Request,
   backUrl: string | undefined,
   _model: ApplicationModel,
   _config: ApplicationConfig,

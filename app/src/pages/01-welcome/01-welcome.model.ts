@@ -23,13 +23,13 @@ type WelcomeViewModel = Record<string, unknown> & ViewModel;
  * @returns {Promise<WelcomeViewModel>} Our built IntroViewModel.
  */
 const welcomeViewModelBuilder = async (
-  // request: Request,
+  request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<WelcomeViewModel> => {
-  const viewModel = await viewModelBuilder(/*request,*/ undefined, model, config, error);
+  const viewModel = await viewModelBuilder(request, undefined, model, config, error);
 
   return viewModel;
 };

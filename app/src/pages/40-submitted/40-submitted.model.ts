@@ -24,13 +24,13 @@ type PageViewModel = Record<string, unknown> & ViewModel;
  * @returns {Promise<PageViewModel>} Our built IntroViewModel.
  */
 const modelBuilder = async (
-  // request: Request,
+  request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<PageViewModel> => {
-  const viewModel = await viewModelBuilder(/*request,*/ undefined, model, config, error);
+  const viewModel = await viewModelBuilder(request, undefined, model, config, error);
 
   const pageViewModel: PageViewModel = {
     ...viewModel,

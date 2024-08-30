@@ -25,14 +25,14 @@ interface ApplicantDetailsViewModel extends ViewModel {
  * @returns {Promise<WelcomeViewModel>} Our built IntroViewModel.
  */
 const whatIsYourEmailViewModelBuilder = async (
-  // request: Request,
+  request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<ApplicantDetailsViewModel> => {
   const applicantDetailsViewModel = (await viewModelBuilder(
-    /*request,*/
+    request,
     backUrl,
     model,
     config,

@@ -31,13 +31,13 @@ const createChangeLink = (pageUrl: string, extraQueryParameters: Iterable<[strin
  * @returns {Promise<PageViewModel>} Our built IntroViewModel.
  */
 const modelBuilder = async (
-  // request: Request,
+  request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<PageViewModel> => {
-  const viewModel = await viewModelBuilder(/*request,*/ backUrl, model, config, error);
+  const viewModel = await viewModelBuilder(request, backUrl, model, config, error);
 
   const pageViewModel: PageViewModel = {
     ...viewModel,
