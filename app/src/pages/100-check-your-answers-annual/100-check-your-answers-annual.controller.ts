@@ -1,10 +1,12 @@
 import process from 'node:process';
-import {type Request} from '@hapi/hapi';
-import {type Errors} from '../view-model';
-import {ReturnState, type ReturnDecision} from '../../return-state';
-import {type Controller} from '../../controller';
-import {type ApplicationModel} from '../../application-model';
-import {type ApplicationConfig} from '../../application-config';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
+import { type Errors } from '../view-model';
+import { ReturnState, type ReturnDecision } from '../../return-state';
+import { type Controller } from '../../controller';
+import { type ApplicationModel } from '../../application-model';
+import { type ApplicationConfig } from '../../application-config';
+import { sessionGet, sessionSet } from 'helpers/yar';
 
 type FormData = {
   confirm: string;
@@ -21,19 +23,36 @@ const errorChecker = (request: Request): Errors | undefined => {
 
   return undefined;
 };
+const scloudErrorChecker = (request: ScloudRequest): Errors | undefined => {
+  const formData = request.body as FormData;
+
+  if (formData.confirm !== 'yes') {
+    return {
+      confirmIncorrectValue: true,
+    };
+  }
+
+  return undefined;
+};
 
 const handler = async (request: Request, config: ApplicationConfig): Promise<ReturnDecision> => {
   const errors = errorChecker(request);
 
   if (errors) {
-    return {state: ReturnState.ValidationError};
+    return { state: ReturnState.ValidationError };
   }
 
   let model = (request.yar.get('applicationModel') ?? {}) as ApplicationModel;
 
   let returnsResponse;
   try {
-    returnsResponse = await config.axios.post(`${config.apiEndpoint}/returns/property-return`, model);
+    returnsResponse = await fetch(`${config.apiEndpoint}/returns/property-return`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(model),
+    });
 
     model = {};
     // // Save the confirmed property code to the now empty model.
@@ -51,14 +70,59 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
 
     // Tell the visitor if there are any errors.
     if (errors && !process.env.UNDER_TEST) {
-      return {state: ReturnState.ValidationError};
+      return { state: ReturnState.ValidationError };
     }
   }
 
   // Clear the previous pages
   request.yar.set('previousPages', []);
 
-  return {state: ReturnState.Primary};
+  return { state: ReturnState.Primary };
+};
+
+const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, config: ApplicationConfig): Promise<ReturnDecision> => {
+  const errors = scloudErrorChecker(request);
+
+  if (errors) {
+    return { state: ReturnState.ValidationError };
+  }
+
+  let model = (sessionGet('applicationModel', request) ?? {}) as ApplicationModel;
+
+  let returnsResponse;
+  try {
+    returnsResponse = await fetch(`${config.apiEndpoint}/returns/property-return`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(model),
+    });
+
+    model = {};
+    // // Save the confirmed property code to the now empty model.
+    // model.propertyCodeConfirmation = returnsResponse.data.propertyCode as string;
+    console.log(returnsResponse);
+
+    // Save the application model to session storage.
+    sessionSet('applicationModel', model, request, response);
+  } catch {
+    // If something went wrong with the API call return an error object with the view model.
+    const apiError = true;
+    const errors: Errors = {
+      apiError,
+    };
+
+    // Tell the visitor if there are any errors.
+    if (errors && !process.env.UNDER_TEST) {
+      return { state: ReturnState.ValidationError };
+    }
+  }
+
+  // Clear the previous pages
+  sessionSet('previousPages', [], request, response);
+
+  return { state: ReturnState.Primary };
 };
 
 /**
@@ -66,7 +130,9 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
  */
 const controller: Controller = {
   checkErrors: errorChecker,
+  scloudCheckErrors: scloudErrorChecker,
   handle: handler,
+  scloudHandle: scloudHandler,
 };
 
 export default controller;

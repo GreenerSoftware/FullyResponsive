@@ -1,7 +1,8 @@
-import {type Request} from '@hapi/hapi';
-import {type ReturnDecision, ReturnState} from '../../return-state';
-import {type Errors} from '../view-model';
-import {type Controller} from '../../controller';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
+import { type ReturnDecision, ReturnState } from '../../return-state';
+import { type Errors } from '../view-model';
+import { type Controller } from '../../controller';
 
 /**
  * Runs to check for errors on the page, and returns an errors object to pass
@@ -12,6 +13,9 @@ import {type Controller} from '../../controller';
 const errorChecker = (request: Request): Errors | undefined => {
   return undefined;
 };
+const scloudErrorChecker = (request: ScloudRequest): Errors | undefined => {
+  return undefined;
+};
 
 /**
  * Decides what should happen when the page is posted.
@@ -20,7 +24,17 @@ const errorChecker = (request: Request): Errors | undefined => {
  * @returns {Promise<ReturnDecision>} A ReturnState value that determines the next page to visit.
  */
 const handler = async (request: Request): Promise<ReturnDecision> => {
-  return {state: ReturnState.Primary};
+  return { state: ReturnState.Primary };
+};
+
+/**
+ * Decides what should happen when the page is posted.
+ * It will return a ReturnState to determine the next page to go to.
+ * @param {Request} request A HTTP `Request` object.
+ * @returns {Promise<ReturnDecision>} A ReturnState value that determines the next page to visit.
+ */
+const scloudHandler = async (request: ScloudRequest): Promise<ReturnDecision> => {
+  return { state: ReturnState.Primary };
 };
 
 /**
@@ -28,7 +42,9 @@ const handler = async (request: Request): Promise<ReturnDecision> => {
  */
 const welcomeController: Controller = {
   checkErrors: errorChecker,
+  scloudCheckErrors: scloudErrorChecker,
   handle: handler,
+  scloudHandle: scloudHandler,
 };
 
-export {welcomeController};
+export { welcomeController };

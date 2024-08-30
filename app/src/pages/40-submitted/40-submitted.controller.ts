@@ -1,7 +1,8 @@
-import {type Request} from '@hapi/hapi';
-import {type Errors} from '../view-model';
-import {ReturnState, type ReturnDecision} from '../../return-state';
-import {type Controller} from '../../controller';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
+import { type Errors } from '../view-model';
+import { ReturnState, type ReturnDecision } from '../../return-state';
+import { type Controller } from '../../controller';
 
 /**
  * Runs to check for errors on the page, and returns an errors object to pass
@@ -9,7 +10,10 @@ import {type Controller} from '../../controller';
  * @param {Request} request A HTTP 'Request' object.
  * @returns {Errors | undefined} An errors object if errors are found, else undefined.
  */
-const errorChecker = (request: Request): Errors | undefined => {
+const errorChecker = (request?: Request): Errors | undefined => {
+  return undefined;
+};
+const scloudErrorChecker = (request?: ScloudRequest): Errors | undefined => {
   return undefined;
 };
 
@@ -19,8 +23,11 @@ const errorChecker = (request: Request): Errors | undefined => {
  * @param {Request} request A HTTP 'Request' object.
  * @returns {Promise<ReturnState>} A ReturnState value that determines the next page to visit.
  */
-const handler = async (request: Request): Promise<ReturnDecision> => {
-  return {state: ReturnState.Primary};
+const handler = async (request?: Request): Promise<ReturnDecision> => {
+  return { state: ReturnState.Primary };
+};
+const scloudHandler = async (request?: ScloudRequest): Promise<ReturnDecision> => {
+  return { state: ReturnState.Primary };
 };
 
 /**
@@ -28,7 +35,9 @@ const handler = async (request: Request): Promise<ReturnDecision> => {
  */
 const controller: Controller = {
   checkErrors: errorChecker,
+  scloudCheckErrors: scloudErrorChecker,
   handle: handler,
+  scloudHandle: scloudHandler,
 };
 
 export default controller;
