@@ -1,4 +1,4 @@
-import {type ApplicationConfig} from '../application-config';
+import { type ApplicationConfig } from '../application-config';
 
 /**
  * A Gazetteer search result.
@@ -57,15 +57,10 @@ type GazetteerData = {
  */
 const findAddressesByPostcode = async (config: ApplicationConfig, postcode: string): Promise<GazetteerAddress[]> => {
   // Lookup the postcode in our Gazetteer API.
-  const apiResponse = await config.axios.get(config.gazetteerApiEndpoint, {
-    params: {
-      postcode,
-    },
-    timeout: 10_000,
-  });
+  const apiResponse = await fetch(`${config.gazetteerApiEndpoint}?${new URLSearchParams({ postcode })}`); // timeout: 10_000,
 
   // Grab the data as a typed response.
-  const gazetteerResponse = apiResponse.data as GazetteerData;
+  const gazetteerResponse = (await apiResponse.json()) as GazetteerData;
 
   // A single string in the array rather than an array of objects indicates an
   // error where no addresses have been found.
@@ -88,15 +83,10 @@ const findAddressesByPostcode = async (config: ApplicationConfig, postcode: stri
  */
 const findAddressesByUprn = async (config: ApplicationConfig, uprn: number): Promise<GazetteerAddress[]> => {
   // Lookup the postcode in our Gazetteer API.
-  const apiResponse = await config.axios.get(config.gazetteerApiEndpoint, {
-    params: {
-      uprn,
-    },
-    timeout: 10_000,
-  });
+  const apiResponse = await fetch(`${config.gazetteerApiEndpoint}?${new URLSearchParams({ uprn: (uprn || 0).toString() })}`); // timeout: 10_000,
 
   // Grab the data as a typed response.
-  const gazetteerResponse = apiResponse.data as GazetteerData;
+  const gazetteerResponse = (await apiResponse.json()) as GazetteerData;
 
   // A single string in the array rather than an array of objects indicates an
   // error where no addresses have been found.
@@ -119,16 +109,10 @@ const findAddressesByUprn = async (config: ApplicationConfig, uprn: number): Pro
  */
 const findFullAddressesByUprn = async (config: ApplicationConfig, uprn: number): Promise<any[]> => {
   // Lookup the postcode in our Gazetteer API.
-  const apiResponse = await config.axios.get(config.gazetteerApiEndpoint, {
-    params: {
-      uprn,
-      fieldset: 'all',
-    },
-    timeout: 10_000,
-  });
+  const apiResponse = await fetch(`${config.gazetteerApiEndpoint}?${new URLSearchParams({ uprn: (uprn || 0).toString(), fieldset: 'all' })}`); // timeout: 10_000,
 
   // Grab the data as a typed response.
-  const gazetteerResponse = apiResponse.data as GazetteerData;
+  const gazetteerResponse = (await apiResponse.json()) as GazetteerData;
 
   // A single string in the array rather than an array of objects indicates an
   // error where no addresses have been found.
@@ -146,6 +130,6 @@ const findFullAddressesByUprn = async (config: ApplicationConfig, uprn: number):
 /**
  * Make calls to our Gazetteer API.
  */
-const gazetteer = {findAddressesByPostcode, findAddressesByUprn, findFullAddressesByUprn};
+const gazetteer = { findAddressesByPostcode, findAddressesByUprn, findFullAddressesByUprn };
 
-export {gazetteer, type GazetteerAddress};
+export { gazetteer, type GazetteerAddress };
