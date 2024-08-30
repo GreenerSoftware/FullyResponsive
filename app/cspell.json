@@ -22,7 +22,8 @@
     "Glenbuck",
     "Sika",
     "MUNERIGIE",
-    "KILFINNAN"
+    "KILFINNAN",
+    "scloud"
   ],
   "ignorePaths": [
     "node_modules/**/*",
