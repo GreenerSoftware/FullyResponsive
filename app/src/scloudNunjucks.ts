@@ -1,7 +1,6 @@
 
 import * as Nunjucks from 'nunjucks';
 import { readdir } from 'node:fs/promises';
-import { Response } from '@scloud/lambda-api/dist/types';
 
 let environment: Nunjucks.Environment;
 
@@ -22,18 +21,11 @@ const getDirectories = async (source: string): Promise<string[]> => {
   }
 };
 
-export async function njkView(template: string, context?: any, statusCode = 200): Promise<Response> {
+export async function njkView(template: string, context?: any): Promise<string> {
   if (!environment) {
     const distributionPagesDirectories = await getDirectories('pages');
     environment = Nunjucks.configure(distributionPagesDirectories, { watch: false });
   }
   const njk = Nunjucks.compile(template, environment);
-  const body = njk.render(context);
-  return {
-    statusCode,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-    body,
-  };
+  return njk.render(context);
 }
