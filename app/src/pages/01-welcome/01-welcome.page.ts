@@ -1,8 +1,8 @@
-import {type ApplicationConfig} from '../../application-config';
-import {Page} from '../page';
-import {welcome as pathUrl, whatIsYourEmail as primaryPath} from '../page-urls';
-import {welcomeViewModelBuilder} from './01-welcome.model';
-import {welcomeController} from './01-welcome.controller';
+import { type ApplicationConfig } from '../../application-config';
+import { Page } from '../page';
+import { welcome as pathUrl, whatIsYourEmail as primaryPath } from '../page-urls';
+import { welcomeViewModelBuilder } from './01-welcome.model';
+import { welcomeController } from './01-welcome.controller';
 
 /**
  * Build our app's welcome page.
@@ -37,4 +37,4 @@ const welcomePage = (config: ApplicationConfig): Page => {
   });
 };
 
-export {welcomePage};
+export { welcomePage };
