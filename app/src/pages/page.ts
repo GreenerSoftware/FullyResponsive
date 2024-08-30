@@ -17,6 +17,7 @@ import * as pageUrls from './page-urls';
 import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
 import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
+import { njkView } from 'scloudNunjucks';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -50,12 +51,19 @@ type PageParameters = {
    * page.
    */
   viewModel: (
-    // request: Request,
+    request: Request,
     backUrl: string | undefined,
     model: ApplicationModel,
     config: ApplicationConfig,
     error?: Errors,
   ) => Promise<ViewModel>;
+  // scloudViewModel: (
+  //   request: ScloudRequest,
+  //   backUrl: string | undefined,
+  //   model: ApplicationModel,
+  //   config: ApplicationConfig,
+  //   error?: Errors,
+  // ) => Promise<ViewModel>;
 
   /**
    * Which `Controller to use to handle the `get` and `post` events sent to this
@@ -120,12 +128,25 @@ type PageParameters = {
   customGetHandler?: HandlerFunction;
 };
 
-function redirect(location: string): ScloudResponse {
+function redirect(location: string, response: ScloudResponse): ScloudResponse {
   return {
+    ...response,
     statusCode: 302,
     headers: {
       location,
     },
+  };
+}
+
+export async function view(response: ScloudResponse, template: string, context?: any, statusCode = 200): Promise<ScloudResponse> {
+  const body = njkView(template, context);
+  return {
+    ...response,
+    statusCode,
+    headers: {
+      'Content-Type': 'text/html',
+    },
+    body,
   };
 }
 
@@ -140,7 +161,7 @@ const getViewModel = async (
   model: ApplicationModel,
   errors: Errors | undefined = undefined,
 ): Promise<ViewModel> => {
-  const viewModelResult = await parameters.viewModel(/*request,*/ page, model, parameters.config!, errors);
+  const viewModelResult = await parameters.viewModel(request, page, model, parameters.config!, errors);
   return { ...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl };
 };
 
@@ -155,7 +176,7 @@ const scloudGetViewModel = async (
   model: ApplicationModel,
   errors: Errors | undefined = undefined,
 ): Promise<ViewModel> => {
-  const viewModelResult = await parameters.viewModel(/*request,*/ page, model, parameters.config!, errors);
+  const viewModelResult = await parameters.scloudViewModel(request, page, model, parameters.config!, errors);
   return { ...viewModelResult, feedbackUrl: parameters.config?.feedbackUrl };
 };
 
@@ -228,7 +249,7 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
  * @param {HandlerParameters} handlerParameters The handler parameters.
  * @returns {ResponseObject} Response object.
  */
-const scloudGetHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters): ScloudResponse => {
+const scloudGetHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters): Promise<ScloudResponse> => {
   const response: ScloudResponse = { statusCode: 200 };
   const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
   const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => T[];
@@ -247,7 +268,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
 
     if (Object.keys(AllowedPageOverrides).includes(page)) {
       const finalPage = AllowedPageOverrides[page as keyof typeof AllowedPageOverrides].slice(1);
-      return redirect(finalPage);
+      return redirect(finalPage, response);
     }
   }
 
@@ -282,10 +303,10 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
       parameters,
       model,
     );
-    return h.view(parameters.view, viewModel);
+    return view(response, parameters.view, viewModel);
   } catch (error: unknown) {
     console.error(error);
-    return h.view('error-500').code(500);
+    return view(response, 'error-500', undefined, 500);
   }
 };
 
@@ -373,18 +394,18 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const fixedRequest = request; // : Request = { ...request, query: fixedQueryParameters } as Request;
 
-  const decision = await parameters.controller.handle(request, parameters.config);
+  const decision = await parameters.controller.scloudHandle(request, response, parameters.config);
 
   // If the controller tells us we're broken, check for the errors, then
   // render the error-ful page.
   if (decision.state === ReturnState.ValidationError) {
-    const errors = parameters.controller.checkErrors(fixedRequest);
+    const errors = parameters.controller.scloudCheckErrors(fixedRequest);
     const viewModel: ViewModel = await scloudGetViewModel(fixedRequest, previousPage, parameters, model, errors);
-    return h.view(parameters.view, viewModel);
+    return view(response, parameters.view, viewModel);
   }
 
   if (decision.state === ReturnState.Redirect) {
-    return h.redirect(decision.redirectLink);
+    return redirect(decision.redirectLink || '/', response);
   }
 
   // If we make it this far, we're OK, so save this page to the list of
@@ -401,30 +422,30 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
   if (decision.state === ReturnState.Quinary) {
-    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`);
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the quaternary
   // path, redirect there.
   if (decision.state === ReturnState.Quaternary) {
-    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`);
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the tertiary
   // path, redirect there.
   if (decision.state === ReturnState.Tertiary) {
-    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`);
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the secondary
   // path, redirect there.
   if (decision.state === ReturnState.Secondary) {
-    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`);
+    return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`, response);
   }
 
   // If we made it this far then we've passed all the filters above, so it's
   // time to move forward!
-  return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`);
+  return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`, response);
 };
 
 /**
@@ -552,7 +573,7 @@ class Page implements ServerRoute, CustomHandlers {
 
       // If we're not allowed to visit this page, give the visitor a 403 error.
       if (!guardAllows(previousPages, parameters.guardAllowPrevious)) {
-        return h.view('error-403').code(403);
+        return view(response, 'error-403', 403);
       }
 
       const handlerParameters: HandlerParameters = {
@@ -565,14 +586,16 @@ class Page implements ServerRoute, CustomHandlers {
       // If we're allowed, and we're just getting the page, build a view-model
       // and render the view.
       if (request.method === 'GET') {
-        return this.customGetHandler
-          ? this.customGetHandler(request, h, handlerParameters)
-          : scloudGetHandler(request, handlerParameters);
+        // return this.customGetHandler
+        //   ? this.customGetHandler(request, h, handlerParameters)
+        //   : scloudGetHandler(request, handlerParameters);
+        return scloudGetHandler(request, handlerParameters);
       }
 
-      return this.customPostHandler
-        ? this.customPostHandler(request, h, handlerParameters)
-        : scloudPostHandler(request, handlerParameters);
+      // return this.customPostHandler
+      //   ? this.customPostHandler(request, h, handlerParameters)
+      //   : scloudPostHandler(request, handlerParameters);
+      return scloudPostHandler(request, handlerParameters);
     };
 
     this.options = parameters.options;
