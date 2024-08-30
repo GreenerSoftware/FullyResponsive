@@ -1,7 +1,8 @@
-import {type Request} from '@hapi/hapi';
-import {type ApplicationConfig} from './application-config';
-import {type Errors} from './pages/view-model';
-import {type ReturnDecision} from './return-state';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
+import { type ApplicationConfig } from './application-config';
+import { type Errors } from './pages/view-model';
+import { type ReturnDecision } from './return-state';
 
 /**
  * Controllers for pages validate incoming forms and decide which path to take
@@ -13,6 +14,7 @@ type Controller = {
    * @param request
    */
   checkErrors(request: Request): Errors | undefined;
+  scloudCheckErrors(request: ScloudRequest): Errors | undefined;
 
   /**
    * Handle the incoming form.
@@ -22,6 +24,7 @@ type Controller = {
    * another page based on the visitor's answer.
    */
   handle(request: Request, config?: ApplicationConfig): Promise<ReturnDecision>;
+  scloudHandle(request: ScloudRequest, response: ScloudResponse, config?: ApplicationConfig): Promise<ReturnDecision>;
 };
 
-export type {Controller};
+export type { Controller };
