@@ -8,7 +8,7 @@ function messageBody(...messages: (string | null | undefined)[]): string {
   const segments: (string | undefined)[] = [process.env.PRODUCT, process.env.COMPONENT, new Date().toISOString()];
   const identifier = segments.filter((segment) => segment).join('/');
 
-  // The message to be sent - skip any empty/undefined serments
+  // The message to be sent - skip any empty/undefined segments
   const message = messages.filter((m) => m).join(' ');
   return `[${identifier}]\n${message}`;
 }
