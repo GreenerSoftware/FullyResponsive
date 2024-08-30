@@ -20,7 +20,7 @@ const config: ApplicationConfig = {
   sessionSecret: env('DEER_SESSION_SECRET'),
   gazetteerApiEndpoint: env('PC_LOOKUP_API_URL'),
   feedbackUrl: env('DEER_FEEDBACK_URL'),
-  underTest: Boolean(env('UNDER_TEST'),
+  underTest: Boolean(env('UNDER_TEST')),
 };
 
 async function errorHandler(request: Request, e: Error): Promise<Response> {
