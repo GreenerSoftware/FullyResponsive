@@ -1,7 +1,6 @@
 
 import * as Nunjucks from 'nunjucks';
 import { readdir } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
 
 let environment: Nunjucks.Environment;
 
