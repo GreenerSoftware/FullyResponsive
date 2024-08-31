@@ -264,6 +264,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
 
   const overRiddenPage = flash(response, 'nextPageOverride');
   if (overRiddenPage?.length > 0) {
+    console.log('scloudGetHandler overRiddenPage', overRiddenPage);
     const page = overRiddenPage[0] as string;
 
     if (Object.keys(AllowedPageOverrides).includes(page)) {
@@ -275,6 +276,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
   // If we're going backwards through the app, we'll need to 'adjust
   // history'.
   if (query.action === 'back') {
+    console.log('scloudGetHandler back', query.action);
     if (query.backPage) {
       flash(response, 'nextPageOverride', query.backPage);
 
@@ -303,9 +305,11 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
       parameters,
       model,
     );
+    console.log('scloudGetHandler viewModel', viewModel);
     return view(response, parameters.view, viewModel);
   } catch (error: unknown) {
     console.error(error);
+    console.log('scloudGetHandler error', error);
     return view(response, 'error-500', undefined, 500);
   }
 };
@@ -558,6 +562,7 @@ class Page implements ServerRoute, CustomHandlers {
 
       // Get the model from the visitor's session.
       let model = (get('applicationModel') ?? {}) as ApplicationModel;
+      console.log('scloudHandler model', model);
 
       // If we are mocking, and the session model is empty, give it initial data.
       if (parameters.config?.mockApplicationModel && Object.keys(model).length === 0) {
@@ -570,9 +575,11 @@ class Page implements ServerRoute, CustomHandlers {
       // Grab the list of of previous pages from the visitor's session.
       const previousPages = (get('previousPages') ?? []) as string[];
       const previousPage = previousPages.at(-1);
+      console.log('scloudHandler previousPage', previousPage);
 
       // If we're not allowed to visit this page, give the visitor a 403 error.
       if (!guardAllows(previousPages, parameters.guardAllowPrevious)) {
+        console.log('scloudHandler guardAllows', 403);
         return view(response, 'error-403', 403);
       }
 
@@ -582,6 +589,7 @@ class Page implements ServerRoute, CustomHandlers {
         previousPage: previousPage!,
         previousPages,
       };
+      console.log('scloudHandler handlerParameters', handlerParameters);
 
       // If we're allowed, and we're just getting the page, build a view-model
       // and render the view.
@@ -589,6 +597,7 @@ class Page implements ServerRoute, CustomHandlers {
         // return this.customGetHandler
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
+        console.log('scloudHandler scloudGetHandler', scloudGetHandler);
         return scloudGetHandler(request, handlerParameters);
       }
 
