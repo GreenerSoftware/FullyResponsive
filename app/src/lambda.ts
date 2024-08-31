@@ -45,7 +45,7 @@ const sessionHandler: ContextBuilder = async (request: Request) => {
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
   try {
     const rs = routes(config);
-    console.log(Object.keys(rs));
+    // console.log(Object.keys(rs));
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
     return result;
   } catch (e) {
