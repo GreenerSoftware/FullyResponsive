@@ -1,6 +1,7 @@
 
 import * as Nunjucks from 'nunjucks';
 import { readdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 
 let environment: Nunjucks.Environment;
 
@@ -34,7 +35,11 @@ export async function njkView(template: string, context?: any): Promise<string> 
     ], { watch: false });
   }
   console.log('njkView compile', template);
-  const njk = Nunjucks.compile(template, environment);
+  readFileSync(template, 'utf8');
+  // const njk = Nunjucks.compile(template, environment);
   console.log('njkView render context', context);
-  return njk.render(context);
+  const rendered = Nunjucks.render(template, context);
+  console.log('njkView rendered', rendered);
+  return rendered;
+  // return njk.render(context);
 }
