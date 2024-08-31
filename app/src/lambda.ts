@@ -18,9 +18,9 @@ const config: ApplicationConfig = {
   apiEndpoint: env('DEER_API_URL'),
   hostPrefix: env('DEER_HOST_PREFIX'),
   sessionSecret: env('DEER_SESSION_SECRET'),
-  gazetteerApiEndpoint: env('PC_LOOKUP_API_URL'),
-  feedbackUrl: env('DEER_FEEDBACK_URL'),
-  underTest: Boolean(env('UNDER_TEST')),
+  gazetteerApiEndpoint: env('PC_LOOKUP_API_URL', 'http://mock-gazetteer-api/endpoint'),
+  feedbackUrl: env('DEER_FEEDBACK_URL', 'https://www.google.com'),
+  underTest: Boolean(env('UNDER_TEST', 'false')),
 };
 
 async function errorHandler(request: Request, e: Error): Promise<Response> {
