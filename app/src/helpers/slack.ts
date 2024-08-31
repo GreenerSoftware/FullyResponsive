@@ -23,7 +23,7 @@ export async function slackLog(...messages: (string | null | undefined)[]): Prom
   // Log to the console
   console.log(body);
 
-  const queueUrl = env('SLACK_QUEUE_URL');
+  const queueUrl = env('SLACK_QUEUE_URL', '');
   if (queueUrl) {
     try {
       const command = new SendMessageCommand({
