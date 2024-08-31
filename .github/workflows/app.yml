@@ -54,16 +54,6 @@ jobs:
         cd dist/
         npm ci --omit=dev
 
-    - name: Upload assets to s3
-      working-directory: ${{ github.workflow }}
-      run: |
-        # app assets
-        mkdir deer-return
-        cp -r assets deer-return/
-        cp -r node_modules/govuk-frontend deer-return/
-        cp -r node_modules/naturescot-frontend deer-return/
-        aws s3 sync --delete deer-return s3://${bucket}/deer-return/
-
     - name: Package
       working-directory: ${{ github.workflow }}
       run: |
@@ -74,6 +64,16 @@ jobs:
       run: |
         aws s3 cp dist/function.zip s3://${{ env.buildsBucket }}/${{ github.workflow }}.zip
         aws lambda update-function-code --function-name=${{ env.lambdaName }} --s3-bucket ${{ env.buildsBucket }} --s3-key ${{ github.workflow }}.zip
+
+    - name: Upload assets to s3
+      working-directory: ${{ github.workflow }}
+      run: |
+        # app assets
+        mkdir deer-return
+        cp -r assets deer-return/
+        cp -r node_modules/govuk-frontend deer-return/
+        cp -r node_modules/naturescot-frontend deer-return/
+        aws s3 sync --delete deer-return s3://${bucket}/deer-return/
 
     - name: Invalidate Cloudfront
       working-directory: ${{ github.workflow }}
