@@ -25,7 +25,13 @@ export async function njkView(template: string, context?: any): Promise<string> 
   if (!environment) {
     const distributionPagesDirectories = await getDirectories('pages');
     console.log('njkView distributionPagesDirectories', distributionPagesDirectories);
-    environment = Nunjucks.configure(distributionPagesDirectories, { watch: false });
+    environment = Nunjucks.configure([
+      ...distributionPagesDirectories,
+      'views',
+      'src/pages',
+      'node_modules/govuk-frontend',
+      'node_modules/naturescot-frontend',
+    ], { watch: false });
   }
   console.log('njkView compile', template);
   const njk = Nunjucks.compile(template, environment);
