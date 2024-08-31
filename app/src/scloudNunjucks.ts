@@ -34,8 +34,7 @@ export async function njkView(template: string, context?: any): Promise<string> 
       'node_modules/naturescot-frontend',
     ], { watch: false });
   }
-  console.log('njkView compile', template);
-  readFileSync(template, 'utf8');
+  console.log('njkView readFileSync', template);
   // const njk = Nunjucks.compile(template, environment);
   console.log('njkView render context', context);
   const rendered = Nunjucks.render(template, context);
