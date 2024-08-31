@@ -80,7 +80,7 @@ jobs:
         cp -r node_modules/naturescot-frontend deer-return/
         # Add missing fonts
         mkdir -p deer-return/naturescot-frontend/assets/fonts
-        cp assets/fonts/* deer-return/node_modules/naturescot-frontend/assets/fonts/
+        cp assets/fonts/* deer-return/naturescot-frontend/assets/fonts/
         aws s3 sync --delete deer-return s3://${bucket}/deer-return/
 
     - name: Invalidate Cloudfront
