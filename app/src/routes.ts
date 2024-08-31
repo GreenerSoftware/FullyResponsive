@@ -27,7 +27,7 @@ export function routes(config: ApplicationConfig): Routes {
       GET: async () => ({
         statusCode: 302,
         headers: {
-          Location: '/welcome',
+          Location: '/deer-return/welcome',
         },
         body: '',
       })
