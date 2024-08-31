@@ -46,6 +46,11 @@ jobs:
       run: |
         npm i
         npm run build
+        cp src/pages/*.njk dist/pages/
+        cp src/pages/01-welcome/*.njk dist/pages/01-welcome/
+        cp src/pages/20-personal-details/*.njk dist/pages/20-personal-details/
+        cp src/pages/40-submitted/*.njk dist/pages/40-submitted/
+        cp src/pages/100-check-your-answers-annual/*.njk dist/pages/100-check-your-answers-annual/
 
     - name: Dependencies
       working-directory: ${{ github.workflow }}
