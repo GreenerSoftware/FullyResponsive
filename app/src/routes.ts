@@ -59,10 +59,10 @@ export function routes(config: ApplicationConfig): Routes {
       })
     },
 
-    [welcomePagePath]: { GET: welcomePageHandler },
-    [whatIsYourEmailPagePath]: { GET: whatIsYourEmailPageHandler },
-    [checkYourAnswersAnnualPagePath]: { GET: checkYourAnswersAnnualPageHandler },
-    [cullSubmittedAnnualPagePath]: { GET: cullSubmittedAnnualPageHandler },
+    [welcomePagePath]: { GET: welcomePageHandler, POST: welcomePageHandler },
+    [whatIsYourEmailPagePath]: { GET: whatIsYourEmailPageHandler, POST: whatIsYourEmailPageHandler },
+    [checkYourAnswersAnnualPagePath]: { GET: checkYourAnswersAnnualPageHandler, POST: checkYourAnswersAnnualPageHandler },
+    [cullSubmittedAnnualPagePath]: { GET: cullSubmittedAnnualPageHandler, POST: cullSubmittedAnnualPageHandler },
   };
 };
 
