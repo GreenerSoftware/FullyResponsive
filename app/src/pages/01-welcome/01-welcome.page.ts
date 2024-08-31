@@ -1,7 +1,7 @@
 import { type ApplicationConfig } from '../../application-config';
 import { Page } from '../page';
 import { welcome as pathUrl, whatIsYourEmail as primaryPath } from '../page-urls';
-import { welcomeViewModelBuilder } from './01-welcome.model';
+import { welcomeViewModelBuilder, scloudWelcomeViewModelBuilder } from './01-welcome.model';
 import { welcomeController } from './01-welcome.controller';
 
 /**
@@ -28,6 +28,7 @@ const welcomePage = (config: ApplicationConfig): Page => {
 
     // The view model for this page.
     viewModel: welcomeViewModelBuilder,
+    scloudViewModel: scloudWelcomeViewModelBuilder,
 
     // The controller for this page.
     controller: welcomeController,

@@ -1,11 +1,11 @@
-import {type ApplicationConfig} from '../../application-config';
-import {Page} from '../page';
+import { type ApplicationConfig } from '../../application-config';
+import { Page } from '../page';
 import {
   cullSubmittedAnnual as pathUrl,
   welcome as primaryPath,
   checkYourAnswersAnnual as previousPage,
 } from '../page-urls';
-import viewModel from './40-submitted.model';
+import { submittedViewModel, scloudSubmittedViewModel } from './40-submitted.model';
 import controller from './40-submitted.controller';
 
 /**
@@ -31,7 +31,8 @@ const page = (config: ApplicationConfig): Page => {
     view: '40-submitted',
 
     // The view model for this page.
-    viewModel,
+    viewModel: submittedViewModel,
+    scloudViewModel: scloudSubmittedViewModel,
 
     // The controller for this page.
     controller,

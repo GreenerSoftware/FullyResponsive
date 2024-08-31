@@ -1,8 +1,8 @@
-import {type ApplicationConfig} from '../../application-config';
-import {Page} from '../page';
-import {whatIsYourEmail as pathUrl, checkYourAnswersAnnual as primaryPath, welcome as previousPage} from '../page-urls';
-import {whatIsYourEmailViewModelBuilder} from './20-personal-details.model';
-import {whatIsYourEmailController} from './20-personal-details.controller';
+import { type ApplicationConfig } from '../../application-config';
+import { Page } from '../page';
+import { whatIsYourEmail as pathUrl, checkYourAnswersAnnual as primaryPath, welcome as previousPage } from '../page-urls';
+import { whatIsYourEmailViewModelBuilder, scloudWhatIsYourEmailViewModelBuilder } from './20-personal-details.model';
+import { whatIsYourEmailController } from './20-personal-details.controller';
 
 /**
  * Build our app's welcome page.
@@ -28,6 +28,7 @@ const page = (config: ApplicationConfig): Page => {
 
     // The view model for this page.
     viewModel: whatIsYourEmailViewModelBuilder,
+    scloudViewModel: scloudWhatIsYourEmailViewModelBuilder,
 
     // The controller for this page.
     controller: whatIsYourEmailController,

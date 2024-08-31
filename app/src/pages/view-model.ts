@@ -1,4 +1,5 @@
-// import { type Request } from '@hapi/hapi';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
 import { type ApplicationModel } from '../application-model';
 import { type ApplicationConfig } from '../application-config';
 
@@ -75,5 +76,20 @@ const viewModelBuilder = async (
 
   return viewModel;
 };
+const scloudViewModelBuilder = async (
+  _request: ScloudRequest,
+  backUrl: string | undefined,
+  _model: ApplicationModel,
+  _config: ApplicationConfig,
+  error?: Errors,
+): Promise<ViewModel> => {
+  const viewModel: ViewModel = {
+    backUrl,
+    error,
+    seenCookie: _model.seenCookie,
+  };
 
-export { viewModelBuilder, type Errors, type ViewModel };
+  return viewModel;
+};
+
+export { viewModelBuilder, scloudViewModelBuilder, type Errors, type ViewModel };

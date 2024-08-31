@@ -1,7 +1,8 @@
-// import { type Request } from '@hapi/hapi';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
-import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
+import { scloudViewModelBuilder, viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 
 interface ApplicantDetailsViewModel extends ViewModel {
   isOnBehalf: boolean | undefined;
@@ -46,5 +47,27 @@ const whatIsYourEmailViewModelBuilder = async (
 
   return applicantDetailsViewModel;
 };
+const scloudWhatIsYourEmailViewModelBuilder = async (
+  request: ScloudRequest,
+  backUrl: string | undefined,
+  model: ApplicationModel,
+  config: ApplicationConfig,
+  error?: Errors,
+): Promise<ApplicantDetailsViewModel> => {
+  const applicantDetailsViewModel = (await scloudViewModelBuilder(
+    request,
+    backUrl,
+    model,
+    config,
+    error,
+  )) as ApplicantDetailsViewModel;
 
-export { whatIsYourEmailViewModelBuilder };
+  applicantDetailsViewModel.name = model.applicantName;
+  applicantDetailsViewModel.organisation = model.applicantOrganisation;
+  applicantDetailsViewModel.emailAddress = model.applicantEmailAddress;
+  applicantDetailsViewModel.phoneNumber = model.applicantPhoneNumber;
+
+  return applicantDetailsViewModel;
+};
+
+export { whatIsYourEmailViewModelBuilder, scloudWhatIsYourEmailViewModelBuilder };

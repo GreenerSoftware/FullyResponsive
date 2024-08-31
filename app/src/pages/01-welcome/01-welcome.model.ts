@@ -1,7 +1,8 @@
 import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
-import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
+import { viewModelBuilder, scloudViewModelBuilder, type Errors, type ViewModel } from '../view-model';
 
 /**
  * We extend the base `ViewModel` to get the `backUrl` field and that's not even
@@ -33,5 +34,16 @@ const welcomeViewModelBuilder = async (
 
   return viewModel;
 };
+const scloudWelcomeViewModelBuilder = async (
+  request: ScloudRequest,
+  backUrl: string | undefined,
+  model: ApplicationModel,
+  config: ApplicationConfig,
+  error?: Errors,
+): Promise<WelcomeViewModel> => {
+  const viewModel = await scloudViewModelBuilder(request, undefined, model, config, error);
 
-export { welcomeViewModelBuilder };
+  return viewModel;
+};
+
+export { welcomeViewModelBuilder, scloudWelcomeViewModelBuilder };

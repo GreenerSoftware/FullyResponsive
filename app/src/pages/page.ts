@@ -57,13 +57,13 @@ type PageParameters = {
     config: ApplicationConfig,
     error?: Errors,
   ) => Promise<ViewModel>;
-  // scloudViewModel: (
-  //   request: ScloudRequest,
-  //   backUrl: string | undefined,
-  //   model: ApplicationModel,
-  //   config: ApplicationConfig,
-  //   error?: Errors,
-  // ) => Promise<ViewModel>;
+  scloudViewModel: (
+    request: ScloudRequest,
+    backUrl: string | undefined,
+    model: ApplicationModel,
+    config: ApplicationConfig,
+    error?: Errors,
+  ) => Promise<ViewModel>;
 
   /**
    * Which `Controller to use to handle the `get` and `post` events sent to this

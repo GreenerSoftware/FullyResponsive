@@ -1,8 +1,10 @@
-// import { type Request } from '@hapi/hapi';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
-import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
+import { scloudViewModelBuilder, viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 import { checkYourAnswersAnnual, whatIsYourEmail } from '../page-urls';
+import { sessionGet } from 'helpers/yar';
 
 type PageViewModel = Record<string, unknown> & ViewModel;
 
@@ -30,7 +32,7 @@ const createChangeLink = (pageUrl: string, extraQueryParameters: Iterable<[strin
  * error messages.
  * @returns {Promise<PageViewModel>} Our built IntroViewModel.
  */
-const modelBuilder = async (
+const checkYourAnswersViewModelBuilder = async (
   request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
@@ -54,5 +56,29 @@ const modelBuilder = async (
 
   return pageViewModel;
 };
+const scloudCheckYourAnswersViewModelBuilder = async (
+  request: ScloudRequest,
+  backUrl: string | undefined,
+  model: ApplicationModel,
+  config: ApplicationConfig,
+  error?: Errors,
+): Promise<PageViewModel> => {
+  const viewModel = await scloudViewModelBuilder(request, backUrl, model, config, error);
 
-export default modelBuilder;
+  const pageViewModel: PageViewModel = {
+    ...viewModel,
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const cachedModel = sessionGet('applicationModel', request);
+  pageViewModel.applicantName = cachedModel.applicantName;
+  pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;
+  pageViewModel.applicantEmailAddress = cachedModel.applicantEmailAddress;
+  pageViewModel.applicantPhoneNumber = cachedModel.applicantPhoneNumber;
+
+  pageViewModel.changePersonalDetailsLink = createChangeLink(whatIsYourEmail);
+
+  return pageViewModel;
+};
+
+export { checkYourAnswersViewModelBuilder, scloudCheckYourAnswersViewModelBuilder };

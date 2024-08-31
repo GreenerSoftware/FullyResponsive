@@ -1,8 +1,9 @@
-// import { type Request } from '@hapi/hapi';
+import { type Request } from '@hapi/hapi';
+import { Request as ScloudRequest } from '@scloud/lambda-api/dist/types';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
 import { landingPage } from '../page-urls';
-import { viewModelBuilder, type Errors, type ViewModel } from '../view-model';
+import { scloudViewModelBuilder, viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 
 /**
  * We extend the base 'ViewModel' to get the 'backUrl' field and that's not even
@@ -23,7 +24,7 @@ type PageViewModel = Record<string, unknown> & ViewModel;
  * error messages.
  * @returns {Promise<PageViewModel>} Our built IntroViewModel.
  */
-const modelBuilder = async (
+const submittedViewModel = async (
   request: Request,
   backUrl: string | undefined,
   model: ApplicationModel,
@@ -44,5 +45,26 @@ const modelBuilder = async (
 
   return pageViewModel;
 };
+const scloudSubmittedViewModel = async (
+  request: ScloudRequest,
+  backUrl: string | undefined,
+  model: ApplicationModel,
+  config: ApplicationConfig,
+  error?: Errors,
+): Promise<PageViewModel> => {
+  const viewModel = await scloudViewModelBuilder(request, undefined, model, config, error);
 
-export default modelBuilder;
+  const pageViewModel: PageViewModel = {
+    ...viewModel,
+  };
+
+  // const clearedModel = (request.yar.get('applicationModel') ?? {}) as ApplicationModel;
+
+  pageViewModel.landingPageURL = landingPage;
+  // Add reference number once API work is done.
+  pageViewModel.referenceNumbersHtml = `Your fake application code<br>12341234`;
+
+  return pageViewModel;
+};
+
+export { submittedViewModel, scloudSubmittedViewModel };

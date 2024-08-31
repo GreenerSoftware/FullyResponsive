@@ -1,11 +1,11 @@
-import {type ApplicationConfig} from '../../application-config';
-import {Page} from '../page';
+import { type ApplicationConfig } from '../../application-config';
+import { Page } from '../page';
 import {
   checkYourAnswersAnnual as pathUrl,
   cullSubmittedAnnual as primaryPath,
   feralPigs as previousPage,
 } from '../page-urls';
-import viewModel from './100-check-your-answers-annual.model';
+import { checkYourAnswersViewModelBuilder, scloudCheckYourAnswersViewModelBuilder } from './100-check-your-answers-annual.model';
 import controller from './100-check-your-answers-annual.controller';
 
 /**
@@ -31,7 +31,8 @@ const page = (config: ApplicationConfig): Page => {
     view: '100-check-your-answers-annual',
 
     // The view model for this page.
-    viewModel,
+    viewModel: checkYourAnswersViewModelBuilder,
+    scloudViewModel: scloudCheckYourAnswersViewModelBuilder,
 
     // The controller for this page.
     controller,
