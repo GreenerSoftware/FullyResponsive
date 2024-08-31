@@ -44,7 +44,9 @@ const sessionHandler: ContextBuilder = async (request: Request) => {
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
   try {
-    const result = await apiHandler(event, context, routes(config), errorHandler, undefined, sessionHandler);
+    const rs = routes(config);
+    console.log(Object.keys(rs));
+    const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
