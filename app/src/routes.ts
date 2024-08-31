@@ -14,11 +14,20 @@ export function routes(config: ApplicationConfig): Routes {
   const { path: checkYourAnswersAnnualPagePath, scloudHandler: checkYourAnswersAnnualPageHandler } = checkYourAnswersAnnualPage(config);
   const { path: cullSubmittedAnnualPagePath, scloudHandler: cullSubmittedAnnualPageHandler } = cullSubmittedAnnualPage(config);
   return {
+    // '/': {
+    //   GET: async () => ({
+    //     statusCode: 302,
+    //     headers: {
+    //       Location: '/deer-return/',
+    //     },
+    //     body: '',
+    //   })
+    // },
     '/': {
       GET: async () => ({
         statusCode: 302,
         headers: {
-          Location: '/deer-return/',
+          Location: '/welcome',
         },
         body: '',
       })
