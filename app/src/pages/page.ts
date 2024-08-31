@@ -140,6 +140,7 @@ function redirect(location: string, response: ScloudResponse): ScloudResponse {
 
 export async function view(response: ScloudResponse, template: string, context?: any, statusCode = 200): Promise<ScloudResponse> {
   const body = njkView(template, context);
+  console.log('view body', `${body}`.slice(0, 100));
   return {
     ...response,
     statusCode,
