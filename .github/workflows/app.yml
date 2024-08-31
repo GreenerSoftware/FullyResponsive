@@ -79,7 +79,8 @@ jobs:
         cp -r node_modules/govuk-frontend deer-return/
         cp -r node_modules/naturescot-frontend deer-return/
         # Add missing fonts
-        cp assets/fonts/* deer-return/node_modules/naturescot-frontend/assets/fonts/Roboto-Regular.woff2
+        mkgir -p deer-return/node_modules/naturescot-frontend/assets/fonts
+        cp assets/fonts/* deer-return/node_modules/naturescot-frontend/assets/fonts/
         aws s3 sync --delete deer-return s3://${bucket}/deer-return/
 
     - name: Invalidate Cloudfront
