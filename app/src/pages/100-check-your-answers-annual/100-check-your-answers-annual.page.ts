@@ -16,7 +16,7 @@ import controller from './100-check-your-answers-annual.controller';
 const page = (config: ApplicationConfig): Page => {
   return new Page({
     // One of these pages must have been previously visited or we throw an error.
-    guardAllowPrevious: [previousPage],
+    guardAllowPrevious: undefined, // [previousPage],
 
     // The path the page is serving on
     path: pathUrl,
