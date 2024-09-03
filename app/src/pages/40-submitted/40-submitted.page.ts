@@ -3,7 +3,7 @@ import { Page } from '../page';
 import {
   cullSubmittedAnnual as pathUrl,
   welcome as primaryPath,
-  checkYourAnswersAnnual as previousPage,
+  // checkYourAnswersAnnual as previousPage,
 } from '../page-urls';
 import { submittedViewModel, scloudSubmittedViewModel } from './40-submitted.model';
 import controller from './40-submitted.controller';
