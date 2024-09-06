@@ -4,7 +4,6 @@ import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
 import { scloudViewModelBuilder, viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 import { checkYourAnswersAnnual, whatIsYourEmail } from '../page-urls';
-import { sessionGet } from 'helpers/yar';
 
 type PageViewModel = Record<string, unknown> & ViewModel;
 
@@ -63,6 +62,8 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<PageViewModel> => {
+  const get = request.context.sessionGet as <T>(key: string) => T;
+
   const viewModel = await scloudViewModelBuilder(request, backUrl, model, config, error);
 
   const pageViewModel: PageViewModel = {
@@ -70,7 +71,7 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const cachedModel = sessionGet('applicationModel', request);
+  const cachedModel = get<ApplicationModel>('applicationModel');
   pageViewModel.applicantName = cachedModel.applicantName;
   pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;
   pageViewModel.applicantEmailAddress = cachedModel.applicantEmailAddress;

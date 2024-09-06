@@ -6,7 +6,6 @@ import { ReturnState, type ReturnDecision } from '../../return-state';
 import { type Controller } from '../../controller';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
-import { sessionGet, sessionSet } from 'helpers/yar';
 
 type FormData = {
   confirm: string;
@@ -81,13 +80,16 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
 };
 
 const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, config: ApplicationConfig): Promise<ReturnDecision> => {
+  const get = request.context.sessionGet as <T>(key: string) => T;
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+
   const errors = scloudErrorChecker(request);
 
   if (errors) {
     return { state: ReturnState.ValidationError };
   }
 
-  let model = (sessionGet('applicationModel', request) ?? {}) as ApplicationModel;
+  let model = (get('applicationModel') ?? {}) as ApplicationModel;
 
   let returnsResponse;
   try {
@@ -105,7 +107,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
     console.log(returnsResponse);
 
     // Save the application model to session storage.
-    sessionSet('applicationModel', model, request, response);
+    set('applicationModel', model, response);
   } catch {
     // If something went wrong with the API call return an error object with the view model.
     const apiError = true;
@@ -120,7 +122,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
   }
 
   // Clear the previous pages
-  sessionSet('previousPages', [], request, response);
+  set('previousPages', [], response);
 
   return { state: ReturnState.Primary };
 };

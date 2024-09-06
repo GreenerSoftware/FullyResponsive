@@ -7,7 +7,6 @@ import { type Errors } from '../view-model';
 import { type Controller } from '../../controller';
 import { validationUtils } from '../../utils/validation';
 import { formUtils } from '../../utils/form';
-import { sessionGet, sessionSet } from 'helpers/yar';
 
 interface FormData {
   name: string;
@@ -120,16 +119,19 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
 };
 
 const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, config: ApplicationConfig): Promise<ReturnDecision> => {
+  const get = request.context.sessionGet as <T>(key: string) => T;
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+
   const formData = request.body as FormData;
 
-  const model = (sessionGet('applicationModel', request) ?? {}) as ApplicationModel;
+  const model = (get('applicationModel') ?? {}) as ApplicationModel;
 
   model.applicantName = formUtils.cleanInputString(formData.name ?? undefined);
   model.applicantOrganisation = formUtils.cleanInputString(formData.organisation ?? undefined);
   model.applicantEmailAddress = formUtils.cleanInputString(formData.emailAddress ?? undefined);
   model.applicantPhoneNumber = formUtils.cleanInputString(formData.phoneNumber ?? undefined);
 
-  sessionSet('applicationModel', model, request, response);
+  set('applicationModel', model, response);
 
   const hasErrors = scloudErrorChecker(request);
 
