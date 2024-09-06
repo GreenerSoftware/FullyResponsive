@@ -71,7 +71,7 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const cachedModel = await get<ApplicationModel>('applicationModel');
+  const cachedModel = await get<ApplicationModel>('applicationModel') || {};
   pageViewModel.applicantName = cachedModel.applicantName;
   pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;
   pageViewModel.applicantEmailAddress = cachedModel.applicantEmailAddress;
