@@ -34,19 +34,15 @@ export async function sessionGet<T>(key: string, request: Request): Promise<T> {
 
 export async function sessionSet(key: string, value: any, request: Request, response: Response) {
   const session = getSession(request);
-  await slackLog(`${request.method} ${request.path} sessionSet getSession: ${JSON.stringify(session)}`);
   session[key] = value;
-  await slackLog(`${request.method} ${request.path} sessionSet: ${key}: ${value}`);
-  await slackLog(`${request.method} ${request.path} sessionSet setSession: ${JSON.stringify(session)}`);
+  await slackLog(`sessionSet: ${request.method} ${request.path} setSession: ${JSON.stringify(session)}`);
   setSession(session, request, response);
 }
 
 export async function sessionFlash<T>(request: Request, response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> {
   const session = getSession(request);
-  await slackLog(`${request.method} ${request.path} sessionFlash getSession: ${JSON.stringify(session)}`);
   session['_flash'] = session['_flash'] || {} as Record<string, unknown>;
   if (message) (session['_flash'] as Record<string, unknown>)[type || 'default'] = message;
-  await slackLog(`${request.method} ${request.path} sessionFlash setSession: ${JSON.stringify(session)}`);
   setSession(session, request, response);
 
   return (session['_flash'] as Record<string, unknown>)[type || 'default'] as T[];
