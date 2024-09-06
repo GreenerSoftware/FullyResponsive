@@ -27,8 +27,8 @@ export function unFlash(request: Request) {
 
 export async function sessionGet<T>(key: string, request: Request): Promise<T> {
   const session = getSession(request);
-  await slackLog(`sessionGet getSession: ${JSON.stringify(session)}`);
-  await slackLog(`sessionGet: ${key}: ${session[key]}`);
+  // await slackLog(`sessionGet getSession: ${JSON.stringify(session)}`);
+  // await slackLog(`sessionGet: ${key}: ${session[key]}`);
   return session[key] as T;
 }
 
@@ -51,3 +51,25 @@ export async function sessionFlash<T>(request: Request, response: Response, type
 
   return (session['_flash'] as Record<string, unknown>)[type || 'default'] as T[];
 }
+
+
+// (async () => {
+//   const request: Request = {
+//     context: {},
+//     method: 'GET',
+//     path: '/path',
+//     pathParameters: {},
+//     query: {},
+//     headers: {},
+//     cookies: {},
+//     body: 'body',
+//   };
+//   const response: Response = {
+//     cookies: {},
+//     statusCode: 200,
+//     headers: {},
+//   };
+//   await sessionSet('key', 'value', request, response);
+//   await sessionFlash(request, response, 'type', 'message');
+//   console.log(JSON.stringify(response));
+// })();
