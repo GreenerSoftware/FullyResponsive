@@ -389,7 +389,7 @@ const postHandler = async (request: Request, h: ResponseToolkit, handlerParamete
 
 const scloudPostHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters) => {
   const response: ScloudResponse = { statusCode: 200 };
-  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
   // , h: ResponseToolkit
   const { parameters, model, previousPage, previousPages } = handlerParameters;
 
@@ -420,7 +420,7 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // const queryParameterString = buildQueryParameters(fixedRequest.query)
   const queryParameterString = new URLSearchParams(fixedRequest.query).toString();
   previousPages.push(`${parameters.path}${queryParameterString}`);
-  set('previousPages', previousPages, response);
+  await set('previousPages', previousPages, response);
 
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
@@ -448,6 +448,7 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
 
   // If we made it this far then we've passed all the filters above, so it's
   // time to move forward!
+  await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
   return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`, response);
 };
 
