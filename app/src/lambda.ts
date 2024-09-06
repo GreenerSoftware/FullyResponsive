@@ -29,14 +29,14 @@ async function errorHandler(request: Request, e: Error): Promise<Response> {
 }
 
 const sessionHandler: ContextBuilder = async (request: Request) => {
-  unFlash(request);
+  // unFlash(request);
   request.context.sessionGet = <T>(key: string): Promise<T> => {
     return sessionGet(key, request);
   };
   request.context.sessionSet = <T>(key: string, value: T, response: Response) => {
     sessionSet(key, value, request, response);
   };
-  request.context.sessionFlash = <T>(response: Response, type?: string, message?: any, isOverride?: boolean): T[] => {
+  request.context.sessionFlash = <T>(response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> => {
     return sessionFlash(request, response, type, message, isOverride);
   };
 };

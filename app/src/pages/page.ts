@@ -251,8 +251,8 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
  */
 const scloudGetHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters): Promise<ScloudResponse> => {
   const response: ScloudResponse = { statusCode: 200 };
-  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
-  const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => T[];
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
+  const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => Promise<T[]>;
   //, h: ResponseToolkit
   const { parameters, model, previousPage, previousPages } = handlerParameters;
 
@@ -262,7 +262,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
   // the app. An `undefined` value signals we've not got a 'new' one.
   let newPreviousPage: string | undefined;
 
-  const overRiddenPage = flash(response, 'nextPageOverride');
+  const overRiddenPage = await flash(response, 'nextPageOverride');
   if (overRiddenPage?.length > 0) {
     const page = overRiddenPage[0] as string;
 
@@ -276,7 +276,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
   // history'.
   if (query.action === 'back') {
     if (query.backPage) {
-      flash(response, 'nextPageOverride', query.backPage);
+      await flash(response, 'nextPageOverride', query.backPage);
 
       delete query.backPage;
     }
@@ -286,7 +286,7 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
     const queryParameterString = new URLSearchParams(query).toString();
     const lastVisitIndex = previousPages.lastIndexOf(`${parameters.path}${queryParameterString}`);
     const newPreviousPages = [...previousPages.slice(0, lastVisitIndex), ...previousPages.slice(lastVisitIndex + 1)];
-    set('previousPages', newPreviousPages, response);
+    await set('previousPages', newPreviousPages, response);
     // We'll be rendering the 'already previous' page, so we need to find
     // out what the 'previous previous' or 'new previous' page is for the
     // back link.
