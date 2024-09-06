@@ -552,23 +552,24 @@ class Page implements ServerRoute, CustomHandlers {
         : postHandler(request, h, handlerParameters);
     };
     this.scloudHandler = async (request: ScloudRequest): Promise<ScloudResponse> => {
-      const get = request.context.sessionGet as <T>(key: string) => T;
-      const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+      const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
+      const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
       const response: ScloudResponse = { statusCode: 200 };
 
       // Get the model from the visitor's session.
-      let model = (get('applicationModel') ?? {}) as ApplicationModel;
+      let model = (await get('applicationModel') ?? {}) as ApplicationModel;
 
       // If we are mocking, and the session model is empty, give it initial data.
       if (parameters.config?.mockApplicationModel && Object.keys(model).length === 0) {
-        model = set('applicationModel', parameters.config.mockApplicationModel, response);
+        model = parameters.config.mockApplicationModel;
+        await set('applicationModel', model, response);
 
         // Set the previous pages in the session to every page that exists in the pageUrls.
-        set('previousPages', Object.values(pageUrls), response);
+        await set('previousPages', Object.values(pageUrls), response);
       }
 
       // Grab the list of of previous pages from the visitor's session.
-      const previousPages = (get('previousPages') ?? []) as string[];
+      const previousPages = (await get('previousPages') ?? []) as string[];
       const previousPage = previousPages.at(-1);
 
       // If we're not allowed to visit this page, give the visitor a 403 error.

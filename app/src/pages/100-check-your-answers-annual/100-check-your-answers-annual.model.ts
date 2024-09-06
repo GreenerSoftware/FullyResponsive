@@ -62,7 +62,7 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   config: ApplicationConfig,
   error?: Errors,
 ): Promise<PageViewModel> => {
-  const get = request.context.sessionGet as <T>(key: string) => T;
+  const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
 
   const viewModel = await scloudViewModelBuilder(request, backUrl, model, config, error);
 
@@ -71,7 +71,7 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const cachedModel = get<ApplicationModel>('applicationModel');
+  const cachedModel = await get<ApplicationModel>('applicationModel');
   pageViewModel.applicantName = cachedModel.applicantName;
   pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;
   pageViewModel.applicantEmailAddress = cachedModel.applicantEmailAddress;

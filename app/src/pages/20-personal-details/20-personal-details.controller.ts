@@ -119,19 +119,19 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
 };
 
 const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, config: ApplicationConfig): Promise<ReturnDecision> => {
-  const get = request.context.sessionGet as <T>(key: string) => T;
-  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+  const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
 
   const formData = request.body as FormData;
 
-  const model = (get('applicationModel') ?? {}) as ApplicationModel;
+  const model = (await get('applicationModel') ?? {}) as ApplicationModel;
 
   model.applicantName = formUtils.cleanInputString(formData.name ?? undefined);
   model.applicantOrganisation = formUtils.cleanInputString(formData.organisation ?? undefined);
   model.applicantEmailAddress = formUtils.cleanInputString(formData.emailAddress ?? undefined);
   model.applicantPhoneNumber = formUtils.cleanInputString(formData.phoneNumber ?? undefined);
 
-  set('applicationModel', model, response);
+  await set('applicationModel', model, response);
 
   const hasErrors = scloudErrorChecker(request);
 

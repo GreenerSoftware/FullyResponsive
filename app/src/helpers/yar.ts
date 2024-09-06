@@ -1,6 +1,7 @@
 import { Request, Response } from "@scloud/lambda-api/dist/types";
+import { slackLog } from "./slack";
 
-function getSession(request: Request): Record<string, any> {
+function getSession(request: Request): Record<string, unknown> {
   if (request.context.session) return request.context.session;
 
   let data = request.cookies.session || '{}';
@@ -24,22 +25,24 @@ export function unFlash(request: Request) {
   // setSession(session, request, response);
 }
 
-export function sessionGet(key: string, request: Request) {
+export async function sessionGet<T>(key: string, request: Request): Promise<T> {
   const session = getSession(request);
-  return session[key];
+  await slackLog(`sessionGet: ${key}: ${session[key]}`);
+  return session[key] as T;
 }
 
-export function sessionSet(key: string, value: any, request: Request, response: Response) {
+export async function sessionSet(key: string, value: any, request: Request, response: Response) {
   const session = getSession(request);
   session[key] = value;
+  await slackLog(`sessionSet: ${key}: ${value}`);
   setSession(session, request, response);
 }
 
-export function sessionFlash(request: Request, response: Response, type?: string, message?: any, isOverride?: boolean) {
+export function sessionFlash<T>(request: Request, response: Response, type?: string, message?: any, isOverride?: boolean): T[] {
   const session = getSession(request);
-  session['_flash'] = session['_flash'] || {};
-  if (message) session['_flash'][type || 'default'] = message;
+  session['_flash'] = session['_flash'] || {} as Record<string, unknown>;
+  if (message) (session['_flash'] as Record<string, unknown>)[type || 'default'] = message;
   setSession(session, request, response);
 
-  return session['_flash'][type || 'default'];
+  return (session['_flash'] as Record<string, unknown>)[type || 'default'] as T[];
 }

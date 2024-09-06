@@ -80,8 +80,8 @@ const handler = async (request: Request, config: ApplicationConfig): Promise<Ret
 };
 
 const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, config: ApplicationConfig): Promise<ReturnDecision> => {
-  const get = request.context.sessionGet as <T>(key: string) => T;
-  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => T;
+  const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
+  const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
 
   const errors = scloudErrorChecker(request);
 
@@ -89,7 +89,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
     return { state: ReturnState.ValidationError };
   }
 
-  let model = (get('applicationModel') ?? {}) as ApplicationModel;
+  let model = (await get('applicationModel') ?? {}) as ApplicationModel;
 
   let returnsResponse;
   try {
@@ -107,7 +107,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
     console.log(returnsResponse);
 
     // Save the application model to session storage.
-    set('applicationModel', model, response);
+    await set('applicationModel', model, response);
   } catch {
     // If something went wrong with the API call return an error object with the view model.
     const apiError = true;
@@ -122,7 +122,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
   }
 
   // Clear the previous pages
-  set('previousPages', [], response);
+  await set('previousPages', [], response);
 
   return { state: ReturnState.Primary };
 };
