@@ -46,7 +46,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     const rs = routes(config);
     // console.log(Object.keys(rs));
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
-    await slackLog(`${event.httpMethod} ${event.path} headers: ${JSON.stringify(result.headers)}`);
+    await slackLog(`Lambda ${event.httpMethod} ${event.path} headers: ${JSON.stringify(result.headers)}`);
     // await slackLog(`${event.httpMethod} ${event.path} multiValueHeaders: ${JSON.stringify(result.multiValueHeaders)}`);
     return result;
   } catch (e) {
