@@ -18,6 +18,7 @@ import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
 import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
 import { njkView } from 'scloudNunjucks';
+import { slackLog } from 'helpers/slack';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -592,13 +593,17 @@ class Page implements ServerRoute, CustomHandlers {
         // return this.customGetHandler
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
-        return scloudGetHandler(request, handlerParameters);
+        const result = await scloudGetHandler(request, handlerParameters);
+        await slackLog(`${request.method} ${request.path} result headers: ${JSON.stringify(result.headers)}`);
+        return result;
       }
 
       // return this.customPostHandler
       //   ? this.customPostHandler(request, h, handlerParameters)
       //   : scloudPostHandler(request, handlerParameters);
-      return scloudPostHandler(request, handlerParameters);
+      const result = await scloudPostHandler(request, handlerParameters);
+      await slackLog(`${request.method} ${request.path} result headers: ${JSON.stringify(result.headers)}`);
+      return result;
     };
 
     this.options = parameters.options;
