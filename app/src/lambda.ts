@@ -8,7 +8,7 @@ import { apiHandler } from '@scloud/lambda-api';
 import { ContextBuilder, Request, Response } from '@scloud/lambda-api/dist/types';
 import routes from './routes';
 import { slackLog } from './helpers/slack';
-import { sessionFlash, sessionGet, sessionSet, unFlash } from 'helpers/yar';
+import { sessionFlash, sessionGet, sessionSet } from 'helpers/yar';
 import { ApplicationConfig } from 'application-config';
 import { env } from 'helpers/util';
 
