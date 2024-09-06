@@ -404,8 +404,8 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   if (decision.state === ReturnState.ValidationError) {
     const errors = parameters.controller.scloudCheckErrors(fixedRequest);
     const viewModel: ViewModel = await scloudGetViewModel(fixedRequest, previousPage, parameters, model, errors);
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} validation error ${parameters.view} with cookies ${JSON.stringify(response.cookies)}`);
-    return view(response, parameters.view, viewModel);
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} validation error view:${parameters.view} viewModel:${JSON.stringify(parameters.viewModel)} with cookies ${JSON.stringify(response.cookies)}`);
+    return view(response, parameters.view, { ...viewModel, ...request.body }); // DC: added submitted body values so we don't lose the input values. Not sure why we're losing them, might be a bug in the original?
   }
 
   if (decision.state === ReturnState.Redirect) {
