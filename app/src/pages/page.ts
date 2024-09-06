@@ -133,6 +133,7 @@ function redirect(location: string, response: ScloudResponse): ScloudResponse {
     ...response,
     statusCode: 302,
     headers: {
+      ...response.headers,
       location,
     },
   };
