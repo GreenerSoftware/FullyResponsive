@@ -3,6 +3,6 @@
  */
 export function env(name: string, fallback?: string): string {
   const result = process.env[name] || fallback;
-  if (!result) throw new Error(`Missing environment variable: ${name}`);
+  if (result === undefined) throw new Error(`Missing environment variable: ${name}`);
   return result;
 }
