@@ -18,7 +18,6 @@ import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
 import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
 import { njkView } from 'scloudNunjucks';
-import { slackLog } from 'helpers/slack';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -404,7 +403,6 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   if (decision.state === ReturnState.ValidationError) {
     const errors = parameters.controller.scloudCheckErrors(fixedRequest);
     const viewModel: ViewModel = await scloudGetViewModel(fixedRequest, previousPage, parameters, model, errors);
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} validation error view:${parameters.view} viewModel:${JSON.stringify(parameters.viewModel)} with cookies ${JSON.stringify(response.cookies)}`);
     return view(response, parameters.view, { ...viewModel, ...request.body }); // DC: added submitted body values so we don't lose the input values. Not sure why we're losing them, might be a bug in the original?
   }
 
@@ -426,34 +424,29 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
   if (decision.state === ReturnState.Quinary) {
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to quintary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the quaternary
   // path, redirect there.
   if (decision.state === ReturnState.Quaternary) {
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to quarternary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the tertiary
   // path, redirect there.
   if (decision.state === ReturnState.Tertiary) {
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to tertiary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the secondary
   // path, redirect there.
   if (decision.state === ReturnState.Secondary) {
-    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to secondary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`, response);
   }
 
   // If we made it this far then we've passed all the filters above, so it's
   // time to move forward!
-  await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
   return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`, response);
 };
 
@@ -600,7 +593,6 @@ class Page implements ServerRoute, CustomHandlers {
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
         const result = await scloudGetHandler(request, handlerParameters);
-        await slackLog(`result cookies: ${request.method} ${request.path} ${JSON.stringify(result.cookies)}`);
         return result;
       }
 
@@ -608,7 +600,6 @@ class Page implements ServerRoute, CustomHandlers {
       //   ? this.customPostHandler(request, h, handlerParameters)
       //   : scloudPostHandler(request, handlerParameters);
       const result = await scloudPostHandler(request, handlerParameters);
-      await slackLog(`result cookies: ${request.method} ${request.path} ${JSON.stringify(result.cookies)}`);
       return result;
     };
 

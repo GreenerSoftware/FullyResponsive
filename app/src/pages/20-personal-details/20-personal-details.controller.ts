@@ -7,7 +7,6 @@ import { type Errors } from '../view-model';
 import { type Controller } from '../../controller';
 import { validationUtils } from '../../utils/validation';
 import { formUtils } from '../../utils/form';
-import { slackLog } from 'helpers/slack';
 
 interface FormData {
   name: string;
@@ -134,7 +133,6 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
 
   await set('applicationModel', model, response);
 
-  await slackLog('scloudErrorChecker: request.body: ' + JSON.stringify(request.body));
   const hasErrors = scloudErrorChecker(request);
 
   if (hasErrors) {

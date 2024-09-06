@@ -1,5 +1,4 @@
 import { Request, Response } from "@scloud/lambda-api/dist/types";
-import { slackLog } from "./slack";
 
 function getSession(request: Request): Record<string, unknown> {
   if (request.context.session) return request.context.session;
@@ -27,15 +26,12 @@ export function unFlash(request: Request) {
 
 export async function sessionGet<T>(key: string, request: Request): Promise<T> {
   const session = getSession(request);
-  // await slackLog(`sessionGet getSession: ${JSON.stringify(session)}`);
-  // await slackLog(`sessionGet: ${key}: ${session[key]}`);
   return session[key] as T;
 }
 
 export async function sessionSet(key: string, value: any, request: Request, response: Response) {
   const session = getSession(request);
   session[key] = value;
-  await slackLog(`sessionSet: ${request.method} ${request.path} setSession: ${JSON.stringify(session)}`);
   setSession(session, request, response);
 }
 
