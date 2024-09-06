@@ -145,6 +145,7 @@ export async function view(response: ScloudResponse, template: string, context?:
     ...response,
     statusCode,
     headers: {
+      ...response.headers,
       'Content-Type': 'text/html',
     },
     body,
