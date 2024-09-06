@@ -6,6 +6,7 @@ import { ReturnState, type ReturnDecision } from '../../return-state';
 import { type Controller } from '../../controller';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
+import { slackLog } from 'helpers/slack';
 
 type FormData = {
   confirm: string;
@@ -83,6 +84,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
   const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
   const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
 
+  await slackLog('scloudErrorChecker: request.body: ' + JSON.stringify(request.body));
   const errors = scloudErrorChecker(request);
 
   if (errors) {

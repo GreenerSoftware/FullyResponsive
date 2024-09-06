@@ -404,6 +404,7 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   if (decision.state === ReturnState.ValidationError) {
     const errors = parameters.controller.scloudCheckErrors(fixedRequest);
     const viewModel: ViewModel = await scloudGetViewModel(fixedRequest, previousPage, parameters, model, errors);
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} validation error ${parameters.view} with cookies ${JSON.stringify(response.cookies)}`);
     return view(response, parameters.view, viewModel);
   }
 
@@ -425,24 +426,28 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
   if (decision.state === ReturnState.Quinary) {
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to quintary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the quaternary
   // path, redirect there.
   if (decision.state === ReturnState.Quaternary) {
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to quarternary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the tertiary
   // path, redirect there.
   if (decision.state === ReturnState.Tertiary) {
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to tertiary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the secondary
   // path, redirect there.
   if (decision.state === ReturnState.Secondary) {
+    await slackLog(`scloudPostHandler ${request.method} ${request.path} redirecting to secondary ${parameters.nextPaths.primary} with cookies ${JSON.stringify(response.cookies)}`);
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`, response);
   }
 
