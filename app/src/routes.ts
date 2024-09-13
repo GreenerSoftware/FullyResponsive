@@ -54,20 +54,6 @@ export function routes(config: ApplicationConfig): Routes {
             }
           ];
         });
-        rows.push([
-          {
-            text: "item.id",
-          },
-          {
-            text: "item.applicantEmailAddress",
-          },
-          {
-            text: "item.applicantOrganisation",
-          },
-          {
-            text: "item.applicantPhoneNumber",
-          }
-        ]);
         return view({ statusCode: 200 }, 'admin', { submissions: rows });
       }
     },
