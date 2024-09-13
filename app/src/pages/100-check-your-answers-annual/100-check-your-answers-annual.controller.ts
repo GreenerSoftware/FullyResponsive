@@ -105,6 +105,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
 
     const result = await returnsResponse.json();
     await slackLog('check-your-answers applicationModel: result', JSON.stringify(result));
+    set('applicationId', result.id, response);
 
     model = {};
     // // Save the confirmed property code to the now empty model.
