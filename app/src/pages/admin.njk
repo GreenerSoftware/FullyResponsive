@@ -5,11 +5,11 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
-{% block pageTitle %}Greener Software - Check your answers{% endblock %}
+{% block pageTitle %}Greener Software - Submissions received{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-column-two-thirds-from-desktop">
-    <h1 class="govuk-heading-l">Check your answers before sending your return</h1>
+    <h1 class="govuk-heading-l">Submissions received by this service</h1>
 
     {% if error %}
       {{ govukErrorSummary({
