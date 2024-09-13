@@ -6,6 +6,8 @@ import checkYourAnswersAnnualPage from 'pages/100-check-your-answers-annual/100-
 import cullSubmittedAnnualPage from 'pages/40-submitted/40-submitted.page';
 import { ApplicationConfig } from 'application-config';
 import { view } from 'pages/page';
+import { listItems } from 'helpers/dynamodb';
+import { env } from 'helpers/util';
 
 
 
@@ -35,7 +37,38 @@ export function routes(config: ApplicationConfig): Routes {
     },
     '/admin': {
       GET: async () => {
-        return view({ statusCode: 200 }, 'admin', { id: 'testId' });
+        const items = await listItems(env('SUBMISSIONS_TABLE'));
+        const rows = items.map((item) => {
+          return [
+            {
+              text: item.id,
+            },
+            {
+              text: item.applicantEmailAddress,
+            },
+            {
+              text: item.applicantOrganisation,
+            },
+            {
+              text: item.applicantPhoneNumber,
+            }
+          ];
+        });
+        rows.push([
+          {
+            text: "item.id",
+          },
+          {
+            text: "item.applicantEmailAddress",
+          },
+          {
+            text: "item.applicantOrganisation",
+          },
+          {
+            text: "item.applicantPhoneNumber",
+          }
+        ]);
+        return view({ statusCode: 200 }, 'admin', { submissions: rows });
       }
     },
 
