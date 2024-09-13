@@ -51,23 +51,11 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     await slackLog(' > request', event.httpMethod, event.path, event.headers['cookie'] || event.headers['Cookie']);
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
-    if ((result.headers || {})['cookie']) {
-      await slackLog('*** replacing header cookie');
-      (result.headers || {})['cookie'] = `${(result.headers || {})['cookie']}`.replace('SameSite=Strict', 'SameSite=None');
-    }
-    if ((result.headers || {})['Cookie']) {
-      await slackLog('*** replacing header Cookie');
-      (result.headers || {})['Cookie'] = `${(result.headers || {})['Cookie']}`.replace('SameSite=Strict', 'SameSite=None');
-    }
-    if ((result.multiValueHeaders || {})['cookie']) {
-      await slackLog('*** replacing multi header cookie');
-      (result.multiValueHeaders || {})['cookie'].map((cookie: string | number | boolean) => `${cookie}`.replace('SameSite=Strict', 'SameSite=None'));
-    }
     if ((result.multiValueHeaders || {})['Cookie']) {
       await slackLog('*** replacing multi header Cookie:', JSON.stringify((result.multiValueHeaders || {})['Cookie']));
       (result.multiValueHeaders || {})['Cookie'] = (result.multiValueHeaders || {})['Cookie'].map((cookie: string | number | boolean) => `${cookie}`.replace('SameSite=Strict', 'SameSite=None'));
     }
-    await slackLog(' < response', event.httpMethod, event.path, `${(result.headers || {})['cookie'] || (result.headers || {})['Cookie'] || (result.multiValueHeaders || {})['cookie'] || (result.multiValueHeaders || {})['Cookie']}`);
+    await slackLog(' < response', event.httpMethod, event.path, `(result.multiValueHeaders || {})['Cookie']}`);
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
