@@ -8,6 +8,7 @@ import { Code } from 'aws-cdk-lib/aws-lambda';
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 // import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 
 // Credentials
@@ -49,6 +50,14 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // Slack
     const slackQueue = this.slack(builds);
 
+    // DynamoDB table for submissions
+    const submissins = new Table(this, 'submissions', {
+      partitionKey: { name: 'id', type: AttributeType.STRING },
+      sortKey: { name: 'timestamp', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     // Create the frontend and API using Cloudfront
     // The following calls will create variables in Github Actions that can be used to deploy the frontend and API:
     // * API_LAMBDA - the name of the Lambda function to update when deploying the API
@@ -70,6 +79,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
       },
       handler: 'lambda.handler',
     });
+    submissins.grantReadWriteData(webApp.lambda);
     slackQueue.grantSendMessages(webApp.lambda);
 
     // Set up OIDC access from Github Actions - this enables builds to deploy updates to the infrastructure
