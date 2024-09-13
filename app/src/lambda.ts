@@ -48,8 +48,10 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     if (event.httpMethod === 'POST' && event.body) {
       console.log('body:', event.body);
     }
+    await slackLog(' > request', event.httpMethod, event.path, event.headers['cookie'] || event.headers['Cookie']);
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
+    await slackLog(' < response', event.httpMethod, event.path, `${(result.headers || {})['cookie'] || (result.headers || {})['Cookie'] || (result.multiValueHeaders || {})['cookie'] || (result.multiValueHeaders || {})['Cookie']}`);
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
