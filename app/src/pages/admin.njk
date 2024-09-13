@@ -53,10 +53,11 @@
       <p class="govuk-body">
         Total submissions: <b>{{ total }}</b>
       </p>
-
+      <p class="govuk-body">
       {% if overflow %}
         {{ overflow }} additional items not displayed
       {% endif %}
+      </p>
 
       {{ govukButton({
       text: "Refresh",
