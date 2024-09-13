@@ -48,7 +48,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     if (event.httpMethod === 'POST' && event.body) {
       console.log('body:', event.body);
     }
-    await slackLog(' > request', event.httpMethod, event.path, event.headers['cookie'] || event.headers['Cookie']);
+    await slackLog(' > request', event.httpMethod, event.path, JSON.stringify(event.headers || ''), JSON.stringify(event.multiValueHeaders || ''));
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
     if ((result.multiValueHeaders || {})['Cookie']) {
