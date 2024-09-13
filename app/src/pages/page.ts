@@ -255,7 +255,7 @@ const getHandler = async (request: Request, h: ResponseToolkit, handlerParameter
 const scloudGetHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters): Promise<ScloudResponse> => {
   const response: ScloudResponse = { statusCode: 200 };
   const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
-  const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => Promise<T[]>;
+  // const flash = request.context.sessionFlash as <T>(response: ScloudResponse, type?: string, message?: any, isOverride?: boolean) => Promise<T[]>;
   //, h: ResponseToolkit
   const { parameters, model, previousPage, previousPages } = handlerParameters;
 
@@ -265,21 +265,21 @@ const scloudGetHandler = async (request: ScloudRequest, handlerParameters: Handl
   // the app. An `undefined` value signals we've not got a 'new' one.
   let newPreviousPage: string | undefined;
 
-  const overRiddenPage = await flash(response, 'nextPageOverride');
-  if (overRiddenPage?.length > 0) {
-    const page = overRiddenPage[0] as string;
+  // const overRiddenPage = await flash(response, 'nextPageOverride');
+  // if (overRiddenPage?.length > 0) {
+  //   const page = overRiddenPage[0] as string;
 
-    if (Object.keys(AllowedPageOverrides).includes(page)) {
-      const finalPage = AllowedPageOverrides[page as keyof typeof AllowedPageOverrides].slice(1);
-      return redirect(finalPage, response);
-    }
-  }
+  //   if (Object.keys(AllowedPageOverrides).includes(page)) {
+  //     const finalPage = AllowedPageOverrides[page as keyof typeof AllowedPageOverrides].slice(1);
+  //     return redirect(finalPage, response);
+  //   }
+  // }
 
   // If we're going backwards through the app, we'll need to 'adjust
   // history'.
   if (query.action === 'back') {
     if (query.backPage) {
-      await flash(response, 'nextPageOverride', query.backPage);
+      // await flash(response, 'nextPageOverride', query.backPage);
 
       delete query.backPage;
     }

@@ -35,14 +35,14 @@ export async function sessionSet(key: string, value: any, request: Request, resp
   setSession(session, request, response);
 }
 
-export async function sessionFlash<T>(request: Request, response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> {
-  const session = getSession(request);
-  session['_flash'] = session['_flash'] || {} as Record<string, unknown>;
-  if (message) (session['_flash'] as Record<string, unknown>)[type || 'default'] = message;
-  setSession(session, request, response);
+// export async function sessionFlash<T>(request: Request, response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> {
+//   const session = getSession(request);
+//   session['_flash'] = session['_flash'] || {} as Record<string, unknown>;
+//   if (message) (session['_flash'] as Record<string, unknown>)[type || 'default'] = message;
+//   setSession(session, request, response);
 
-  return (session['_flash'] as Record<string, unknown>)[type || 'default'] as T[];
-}
+//   return (session['_flash'] as Record<string, unknown>)[type || 'default'] as T[];
+// }
 
 
 // (async () => {

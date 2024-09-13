@@ -8,7 +8,7 @@ import { apiHandler } from '@scloud/lambda-api';
 import { ContextBuilder, Request, Response } from '@scloud/lambda-api/dist/types';
 import routes from './routes';
 import { slackLog } from './helpers/slack';
-import { sessionFlash, sessionGet, sessionSet } from 'helpers/yar';
+import { sessionGet, sessionSet } from 'helpers/yar';
 import { ApplicationConfig } from 'application-config';
 import { env } from 'helpers/util';
 
@@ -36,9 +36,9 @@ const sessionHandler: ContextBuilder = async (request: Request) => {
   request.context.sessionSet = <T>(key: string, value: T, response: Response) => {
     sessionSet(key, value, request, response);
   };
-  request.context.sessionFlash = <T>(response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> => {
-    return sessionFlash(request, response, type, message, isOverride);
-  };
+  // request.context.sessionFlash = <T>(response: Response, type?: string, message?: any, isOverride?: boolean): Promise<T[]> => {
+  //   return sessionFlash(request, response, type, message, isOverride);
+  // };
 };
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
