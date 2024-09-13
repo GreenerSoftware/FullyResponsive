@@ -606,6 +606,7 @@ class Page implements ServerRoute, CustomHandlers {
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
         const result = await scloudGetHandler(request, handlerParameters);
+        await slackLog('scloudGetHandler', request.path, JSON.stringify(result));
         return result;
       }
 
@@ -613,7 +614,7 @@ class Page implements ServerRoute, CustomHandlers {
       //   ? this.customPostHandler(request, h, handlerParameters)
       //   : scloudPostHandler(request, handlerParameters);
       const result = await scloudPostHandler(request, handlerParameters);
-      await slackLog('scloudHandler', request.method, request.path, JSON.stringify(result));
+      await slackLog('scloudPostHandler', request.path, JSON.stringify(result));
       return result;
     };
 
