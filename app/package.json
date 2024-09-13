@@ -65,7 +65,9 @@
     "xo": "^0.57.0"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "*",
     "@aws-sdk/client-sqs": "^3.637.0",
+    "@aws-sdk/lib-dynamodb": "*",
     "@hapi/hapi": "^21.3.3",
     "@hapi/inert": "7.1.0",
     "@hapi/vision": "7.0.3",
