@@ -6,8 +6,8 @@ import checkYourAnswersAnnualPage from 'pages/100-check-your-answers-annual/100-
 import cullSubmittedAnnualPage from 'pages/40-submitted/40-submitted.page';
 import { ApplicationConfig } from 'application-config';
 import { view } from 'pages/page';
-import { listItems } from 'helpers/dynamodb';
-import { env } from 'helpers/util';
+import { listItems, putItem } from 'helpers/dynamodb';
+import { env, random } from 'helpers/util';
 import { slackLog } from 'helpers/slack';
 
 async function admin() {
@@ -61,15 +61,29 @@ export function routes(config: ApplicationConfig): Routes {
     },
     '/deer-api/v1/returns/property-return': {
       POST: async (request) => {
+        const id = random();
+        const timestamp = new Date().toISOString();
         const model = request.body;
-        await slackLog('property-return', JSON.stringify(model));
-        return {
-          statusCode: 200,
-          body: {
-            propertyCode: '123456',
-            model,
-          }
-        };
+        try {
+          await putItem(env('SUBMISSIONS_TABLE'), { ...model, id, timestamp });
+          await slackLog('property-return', JSON.stringify(model));
+          return {
+            statusCode: 200,
+            body: {
+              id,
+              timestamp,
+            }
+          };
+        } catch (e) {
+          await slackLog('error /deer-api/v1/returns/property-return', `${e}`);
+          return {
+            statusCode: 500,
+            body: {
+              error: (e as Error).message,
+            }
+          };
+        }
+
       },
     },
 
