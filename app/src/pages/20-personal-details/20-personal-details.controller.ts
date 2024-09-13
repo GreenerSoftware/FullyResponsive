@@ -132,7 +132,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
   model.applicantOrganisation = formUtils.cleanInputString(formData.organisation ?? undefined);
   model.applicantEmailAddress = formUtils.cleanInputString(formData.emailAddress ?? undefined);
   model.applicantPhoneNumber = formUtils.cleanInputString(formData.phoneNumber ?? undefined);
-  await slackLog('personal details applicationModel updated:', JSON.stringify(await get('applicationModel')));
+  await slackLog('personal details applicationModel updated:', JSON.stringify(model));
 
   await set('applicationModel', model, response);
   await slackLog('personal details applicationModel set:', JSON.stringify(await get('applicationModel')));
