@@ -432,34 +432,29 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
   if (decision.state === ReturnState.Quinary) {
-    await slackLog('redirect to', `${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`, 'with', JSON.stringify(response));
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quinary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the quaternary
   // path, redirect there.
   if (decision.state === ReturnState.Quaternary) {
-    await slackLog('redirect to', `${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`, 'with', JSON.stringify(response));
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.quaternary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the tertiary
   // path, redirect there.
   if (decision.state === ReturnState.Tertiary) {
-    await slackLog('redirect to', `${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`, 'with', JSON.stringify(response));
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.tertiary ?? '/'}`, response);
   }
 
   // If our controller handler told us that we were to take the secondary
   // path, redirect there.
   if (decision.state === ReturnState.Secondary) {
-    await slackLog('redirect to', `${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`, 'with', JSON.stringify(response));
     return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.secondary ?? '/'}`, response);
   }
 
   // If we made it this far then we've passed all the filters above, so it's
   // time to move forward!
-  await slackLog('redirect to', `${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`, 'with', JSON.stringify(response));
   return redirect(`${parameters.config?.pathPrefix ?? ''}${parameters.nextPaths.primary ?? '/'}`, response);
 };
 
@@ -606,8 +601,6 @@ class Page implements ServerRoute, CustomHandlers {
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
         const result = await scloudGetHandler(request, handlerParameters);
-        const { body, ...rest } = result; // Don't log all the HTML in the body
-        await slackLog('scloudGetHandler', request.path, JSON.stringify(rest));
         return result;
       }
 
@@ -615,7 +608,6 @@ class Page implements ServerRoute, CustomHandlers {
       //   ? this.customPostHandler(request, h, handlerParameters)
       //   : scloudPostHandler(request, handlerParameters);
       const result = await scloudPostHandler(request, handlerParameters);
-      await slackLog('scloudPostHandler', request.path, JSON.stringify(result));
       return result;
     };
 
