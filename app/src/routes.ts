@@ -8,7 +8,6 @@ import { ApplicationConfig } from 'application-config';
 import { view } from 'pages/page';
 import { listItems, putItem } from 'helpers/dynamodb';
 import { env, random } from 'helpers/util';
-import { slackLog } from 'helpers/slack';
 
 async function admin() {
   const items = await listItems(env('SUBMISSIONS_TABLE'));
@@ -66,7 +65,6 @@ export function routes(config: ApplicationConfig): Routes {
         const model = request.body;
         try {
           await putItem(env('SUBMISSIONS_TABLE'), { ...model, id, timestamp });
-          await slackLog('property-return', JSON.stringify(model));
           return {
             statusCode: 200,
             body: {
@@ -75,7 +73,6 @@ export function routes(config: ApplicationConfig): Routes {
             }
           };
         } catch (e) {
-          await slackLog('error /deer-api/v1/returns/property-return', `${e}`);
           return {
             statusCode: 500,
             body: {

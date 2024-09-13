@@ -4,7 +4,6 @@ import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
 import { scloudViewModelBuilder, viewModelBuilder, type Errors, type ViewModel } from '../view-model';
 import { checkYourAnswersAnnual, whatIsYourEmail } from '../page-urls';
-import { slackLog } from 'helpers/slack';
 
 type PageViewModel = Record<string, unknown> & ViewModel;
 
@@ -72,7 +71,6 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  await slackLog('check-your-answers applicationModel:', JSON.stringify(await get<ApplicationModel>('applicationModel')));
   const cachedModel = await get<ApplicationModel>('applicationModel') || {};
   pageViewModel.applicantName = cachedModel.applicantName;
   pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;

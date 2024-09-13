@@ -48,16 +48,8 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     if (event.httpMethod === 'POST' && event.body) {
       console.log('body:', event.body);
     }
-    // await slackLog(' > request', event.httpMethod, event.path, JSON.stringify(event.headers || ''), JSON.stringify(event.multiValueHeaders || ''));
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
-    // if ((result.multiValueHeaders || {})['Cookie']) {
-    //   await slackLog('*** replacing multi header Cookie:', JSON.stringify((result.multiValueHeaders || {})['Cookie']));
-    //   (result.multiValueHeaders || {})['Cookie'] = (result.multiValueHeaders || {})['Cookie'].map((cookie: string | number | boolean) => `${cookie}`.replace('SameSite=Strict', 'SameSite=None'));
-    // }
-    // await slackLog(' < response', event.httpMethod, event.path, `${(result.multiValueHeaders || {})['Cookie']}`);
-    // if (result.headers) await slackLog(' < response headers', event.httpMethod, event.path, Object.keys(result.headers).map((key) => `${key}: ${(result.headers || {})[key]}`).join('\n'));
-    // if (result.multiValueHeaders) await slackLog(' < response multiValueHeaders', event.httpMethod, event.path, Object.keys(result.multiValueHeaders).map((key) => `${key}: ${(result.multiValueHeaders || {})[key]}`).join('\n'));
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
