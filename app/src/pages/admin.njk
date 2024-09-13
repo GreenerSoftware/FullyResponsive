@@ -1,7 +1,7 @@
 {% extends "base.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
@@ -28,67 +28,71 @@
     {% endif %}
 
     <form method="post">
-      <h2 class="govuk-heading-m">Latest submission</h2>
-      {{ govukSummaryList({
-        rows: [
-          {
-            key: {
-              text: "ID"
-            },
-            value: {
-              text: id
-            }
-          },
-          {
-            key: {
-              text: "Email"
-            },
-            value: {
-              text: applicantEmailAddress
-            },
-            actions: {
-              items: [
-                {
-                  href: changePersonalDetailsLink,
-                  text: "Change"
-                }
-              ]
-            }
-          },
-          {
-            key: {
-              text: "Organisation"
-            },
-            value: {
-              text: applicantOrganisation
-            },
-            actions: {
-              items: [
-                {
-                  href: changePersonalDetailsLink,
-                  text: "Change"
-                }
-              ]
-            }
-          },
-          {
-            key: {
-              text: "Phone number"
-            },
-            value: {
-              text: applicantPhoneNumber
-            },
-            actions: {
-              items: [
-                {
-                  href: changePersonalDetailsLink,
-                  text: "Change"
-                }
-              ]
-            }
-          }
-        ]
-      }) }}
+
+
+{{ govukTable({
+  caption: "Submissions",
+  captionClasses: "govuk-table__caption--l",
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "ID"
+    },
+    {
+      text: Email
+    },
+    {
+      text: Organisation
+    },
+    {
+      text: Phone number
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "testId"
+      },
+      {
+        text: "applicantEmailAddress"
+      },
+      {
+        text: "applicantOrganisation"
+      },
+      {
+        text: "applicantPhoneNumber"
+      }
+    ],
+    [
+      {
+        text: "testId"
+      },
+      {
+        text: "applicantEmailAddress"
+      },
+      {
+        text: "applicantOrganisation"
+      },
+      {
+        text: "applicantPhoneNumber"
+      }
+    ],
+    [
+      {
+        text: "testId"
+      },
+      {
+        text: "applicantEmailAddress"
+      },
+      {
+        text: "applicantOrganisation"
+      },
+      {
+        text: "applicantPhoneNumber"
+      }
+    ]
+  ]
+}) }}
 
       <h1 class="govuk-heading-m">Declaration</h1>
 
