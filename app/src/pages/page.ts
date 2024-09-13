@@ -606,7 +606,8 @@ class Page implements ServerRoute, CustomHandlers {
         //   ? this.customGetHandler(request, h, handlerParameters)
         //   : scloudGetHandler(request, handlerParameters);
         const result = await scloudGetHandler(request, handlerParameters);
-        await slackLog('scloudGetHandler', request.path, JSON.stringify(result));
+        const { body, ...rest } = result; // Don't log all the HTML in the body
+        await slackLog('scloudGetHandler', request.path, JSON.stringify(rest));
         return result;
       }
 
