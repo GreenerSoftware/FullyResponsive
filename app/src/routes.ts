@@ -27,7 +27,7 @@ async function admin() {
       }
     ];
   });
-  return view({ statusCode: 200 }, 'admin', { submissions: rows });
+  return view({ statusCode: 200 }, 'admin', { submissions: rows.slice(0, 10), total: items.length, overflow: items.slice(10).length });
 }
 
 
