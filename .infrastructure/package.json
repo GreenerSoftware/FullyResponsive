@@ -28,6 +28,8 @@
     "typescript-eslint": "*"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "*",
+    "@aws-sdk/lib-dynamodb": "*",
     "@scloud/cdk-github": "*",
     "@scloud/cdk-patterns": "*",
     "aws-cdk-lib": "*",
