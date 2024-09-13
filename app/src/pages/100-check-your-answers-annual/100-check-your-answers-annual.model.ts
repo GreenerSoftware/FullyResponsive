@@ -72,7 +72,7 @@ const scloudCheckYourAnswersViewModelBuilder = async (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  await slackLog('applicationModel:', JSON.stringify(await get<ApplicationModel>('applicationModel')));
+  await slackLog('check-your-answers applicationModel:', JSON.stringify(await get<ApplicationModel>('applicationModel')));
   const cachedModel = await get<ApplicationModel>('applicationModel') || {};
   pageViewModel.applicantName = cachedModel.applicantName;
   pageViewModel.applicantOrganisation = cachedModel.applicantOrganisation;
