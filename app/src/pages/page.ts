@@ -388,7 +388,6 @@ const postHandler = async (request: Request, h: ResponseToolkit, handlerParamete
 
 const scloudPostHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters) => {
   const response: ScloudResponse = { statusCode: 200 };
-  const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
   const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
   // , h: ResponseToolkit
   const { parameters, model, previousPage, previousPages } = handlerParameters;
