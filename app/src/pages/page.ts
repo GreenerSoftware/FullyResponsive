@@ -409,7 +409,6 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   }
 
   if (decision.state === ReturnState.Redirect) {
-    await slackLog('rPOST', request.path, JSON.stringify(get('applicationModel')));
     return redirect(decision.redirectLink || '/', response);
   }
 
@@ -424,8 +423,6 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   previousPages.push(`${parameters.path}${queryParameterString}`);
 
   await set('previousPages', previousPages, response);
-
-  await slackLog('page POST', request.path, JSON.stringify(get('applicationModel')));
 
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
