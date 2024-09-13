@@ -61,7 +61,7 @@ export function routes(config: ApplicationConfig): Routes {
     },
     '/deer-api/v1/returns/property-return': {
       POST: async (request) => {
-        const id = random();
+        const id = `${random()}${random()}`;
         const timestamp = new Date().toISOString();
         const model = request.body;
         try {
