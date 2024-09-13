@@ -7,6 +7,7 @@ import { type Errors } from '../view-model';
 import { type Controller } from '../../controller';
 import { validationUtils } from '../../utils/validation';
 import { formUtils } from '../../utils/form';
+import { slackLog } from 'helpers/slack';
 
 interface FormData {
   name: string;
@@ -125,13 +126,16 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
   const formData = request.body as FormData;
 
   const model = (await get('applicationModel') ?? {}) as ApplicationModel;
+  await slackLog('personal details applicationModel:', JSON.stringify(await get('applicationModel')));
 
   model.applicantName = formUtils.cleanInputString(formData.name ?? undefined);
   model.applicantOrganisation = formUtils.cleanInputString(formData.organisation ?? undefined);
   model.applicantEmailAddress = formUtils.cleanInputString(formData.emailAddress ?? undefined);
   model.applicantPhoneNumber = formUtils.cleanInputString(formData.phoneNumber ?? undefined);
+  await slackLog('personal details applicationModel updated:', JSON.stringify(await get('applicationModel')));
 
   await set('applicationModel', model, response);
+  await slackLog('personal details applicationModel set:', JSON.stringify(await get('applicationModel')));
 
   const hasErrors = scloudErrorChecker(request);
 
