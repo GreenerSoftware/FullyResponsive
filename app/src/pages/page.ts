@@ -18,6 +18,7 @@ import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
 import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
 import { njkView } from 'scloudNunjucks';
+import { slackLog } from 'helpers/slack';
 
 type HandlerParameters = {
   parameters: PageParameters;
@@ -388,6 +389,7 @@ const postHandler = async (request: Request, h: ResponseToolkit, handlerParamete
 
 const scloudPostHandler = async (request: ScloudRequest, handlerParameters: HandlerParameters) => {
   const response: ScloudResponse = { statusCode: 200 };
+  const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
   const set = request.context.sessionSet as <T>(key: string, value: T, response: ScloudResponse) => Promise<void>;
   // , h: ResponseToolkit
   const { parameters, model, previousPage, previousPages } = handlerParameters;
@@ -407,6 +409,8 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   }
 
   if (decision.state === ReturnState.Redirect) {
+    await slackLog('rPOST', request.path, JSON.stringify(response));
+    await slackLog('rPOST', request.path, JSON.stringify(get('applicationModel')));
     return redirect(decision.redirectLink || '/', response);
   }
 
@@ -419,7 +423,11 @@ const scloudPostHandler = async (request: ScloudRequest, handlerParameters: Hand
   // const queryParameterString = buildQueryParameters(fixedRequest.query)
   const queryParameterString = new URLSearchParams(fixedRequest.query).toString();
   previousPages.push(`${parameters.path}${queryParameterString}`);
+
   await set('previousPages', previousPages, response);
+
+  await slackLog('POST', request.path, JSON.stringify(response));
+  await slackLog('POST', request.path, JSON.stringify(get('applicationModel')));
 
   // If our controller handler told us that we were to take the quinary
   // path, redirect there.
