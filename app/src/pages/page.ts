@@ -18,7 +18,6 @@ import { type ViewModel, type Errors } from './view-model';
 import { AllowedPageOverrides } from './allowed-page-overrides';
 import { Request as ScloudRequest, Response as ScloudResponse } from '@scloud/lambda-api/dist/types';
 import { njkView } from 'scloudNunjucks';
-import { slackLog } from 'helpers/slack';
 
 type HandlerParameters = {
   parameters: PageParameters;
