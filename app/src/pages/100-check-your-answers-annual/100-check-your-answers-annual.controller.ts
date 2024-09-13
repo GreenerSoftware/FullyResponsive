@@ -6,6 +6,7 @@ import { ReturnState, type ReturnDecision } from '../../return-state';
 import { type Controller } from '../../controller';
 import { type ApplicationModel } from '../../application-model';
 import { type ApplicationConfig } from '../../application-config';
+import { slackLog } from 'helpers/slack';
 
 type FormData = {
   confirm: string;
@@ -93,6 +94,7 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
 
   let returnsResponse;
   try {
+    await slackLog('check-your-answers applicationModel: fetching', `${config.apiEndpoint}/returns/property-return`, 'with', JSON.stringify(await get<ApplicationModel>('applicationModel')));
     returnsResponse = await fetch(`${config.apiEndpoint}/returns/property-return`, {
       method: 'POST',
       headers: {
@@ -108,7 +110,8 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
 
     // Save the application model to session storage.
     await set('applicationModel', model, response);
-  } catch {
+  } catch (e) {
+    await slackLog('check-your-answers applicationModel: error', `${e}`);
     // If something went wrong with the API call return an error object with the view model.
     const apiError = true;
     const errors: Errors = {
