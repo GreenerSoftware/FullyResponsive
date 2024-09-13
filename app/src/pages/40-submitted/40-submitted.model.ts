@@ -63,7 +63,7 @@ const scloudSubmittedViewModel = async (
   pageViewModel.landingPageURL = landingPage;
   // Add reference number once API work is done.
   const get = request.context.sessionGet as <T>(key: string) => Promise<T>;
-  pageViewModel.referenceNumbersHtml = `Your fake application code<br>${get('applicationId') || '12341234'}`;
+  pageViewModel.referenceNumbersHtml = `Your fake application code<br>${await get('applicationId') || '12341234'}`;
 
   return pageViewModel;
 };
