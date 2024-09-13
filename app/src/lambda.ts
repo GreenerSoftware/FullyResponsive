@@ -56,6 +56,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       (result.multiValueHeaders || {})['Cookie'] = (result.multiValueHeaders || {})['Cookie'].map((cookie: string | number | boolean) => `${cookie}`.replace('SameSite=Strict', 'SameSite=None'));
     }
     await slackLog(' < response', event.httpMethod, event.path, `${(result.multiValueHeaders || {})['Cookie']}`);
+    await slackLog(' < response', event.httpMethod, event.path, JSON.stringify(result.headers || ''));
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
