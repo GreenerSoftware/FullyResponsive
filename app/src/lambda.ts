@@ -43,6 +43,11 @@ const sessionHandler: ContextBuilder = async (request: Request) => {
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
   try {
+    // Show output in the Lambda logs for visibility (because only David has Slack integration) and debugging
+    console.log(event.httpMethod, event.path);
+    if (event.httpMethod === 'POST' && event.body) {
+      console.log('body:', event.body);
+    }
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
     return result;
