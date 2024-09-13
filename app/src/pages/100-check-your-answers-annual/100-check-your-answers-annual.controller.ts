@@ -103,6 +103,9 @@ const scloudHandler = async (request: ScloudRequest, response: ScloudResponse, c
       body: JSON.stringify(model),
     });
 
+    const result = await returnsResponse.json();
+    await slackLog('check-your-answers applicationModel: result', JSON.stringify(result));
+
     model = {};
     // // Save the confirmed property code to the now empty model.
     // model.propertyCodeConfirmation = returnsResponse.data.propertyCode as string;
