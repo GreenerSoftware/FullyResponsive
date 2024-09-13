@@ -51,7 +51,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
     const slackQueue = this.slack(builds);
 
     // DynamoDB table for submissions
-    const submissins = new Table(this, 'submissions', {
+    const submissions = new Table(this, 'submissions', {
       partitionKey: { name: 'id', type: AttributeType.STRING },
       sortKey: { name: 'timestamp', type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
@@ -71,6 +71,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
         // gazetteerApiEndpoint: process.env.PC_LOOKUP_API_URL ?? '',
         // feedbackUrl: process.env.DEER_FEEDBACK_URL ?? 'https://www.google.com',
         // underTest: Boolean(process.env.UNDER_TEST),
+        SUBMISSIONS_TABLE: submissions.tableName,
         SLACK_QUEUE_URL: slackQueue.queueUrl,
       },
       functionProps: {
@@ -79,7 +80,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
       },
       handler: 'lambda.handler',
     });
-    submissins.grantReadWriteData(webApp.lambda);
+    submissions.grantReadWriteData(webApp.lambda);
     slackQueue.grantSendMessages(webApp.lambda);
 
     // Set up OIDC access from Github Actions - this enables builds to deploy updates to the infrastructure
