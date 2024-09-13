@@ -5,6 +5,7 @@ import whatIsYourEmailPage from 'pages/20-personal-details/20-personal-details.p
 import checkYourAnswersAnnualPage from 'pages/100-check-your-answers-annual/100-check-your-answers-annual.page';
 import cullSubmittedAnnualPage from 'pages/40-submitted/40-submitted.page';
 import { ApplicationConfig } from 'application-config';
+import { view } from 'pages/page';
 
 
 
@@ -31,6 +32,11 @@ export function routes(config: ApplicationConfig): Routes {
         },
         body: '',
       })
+    },
+    '/admin': {
+      GET: async () => {
+        return view({ statusCode: 200 }, 'admin', { id: 'testId' });
+      }
     },
 
     '/deer-return/health': {
