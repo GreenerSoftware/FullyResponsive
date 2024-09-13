@@ -50,34 +50,8 @@
   rows: submissions
 }) }}
 
-      <h1 class="govuk-heading-m">Declaration</h1>
-
-      <p class="govuk-body">
-        <b>
-          I confirm that:
-        </b>
-      </p>
-
-      <ul class="govuk-list govuk-list--bullet">
-        <li>The information I have provided is up to date and correct</li>
-
-        <li>I agree with the <a href="/deer-authorisations/privacy">privacy policy</a> of this service</li>
-      </ul>
-
-      {{ govukCheckboxes({
-          id: "confirm",
-          name: "confirm",
-          items: [
-                {
-                  value: "yes",
-                  text: "Yes, I confirm"
-                }
-              ]
-          })
-      }}
-
       {{ govukButton({
-      text: "Accept and send",
+      text: "Refresh",
       preventDoubleClick: true
     }) }}
 
