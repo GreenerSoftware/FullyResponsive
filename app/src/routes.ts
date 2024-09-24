@@ -11,22 +11,26 @@ import { env, random } from 'helpers/util';
 
 async function admin() {
   const items = await listItems(env('SUBMISSIONS_TABLE'));
-  const rows = items.map((item) => {
-    return [
-      {
-        text: item.id,
-      },
-      {
-        text: item.applicantEmailAddress,
-      },
-      {
-        text: item.applicantOrganisation,
-      },
-      {
-        text: item.applicantPhoneNumber,
-      }
-    ];
-  });
+  const rows = items
+    .sort((a, b) => {
+      return b.timestamp.localeCompare(a.timestamp);
+    })
+    .map((item) => {
+      return [
+        {
+          text: item.id,
+        },
+        {
+          text: item.applicantEmailAddress,
+        },
+        {
+          text: item.applicantOrganisation,
+        },
+        {
+          text: item.applicantPhoneNumber,
+        }
+      ];
+    });
   return view({ statusCode: 200 }, 'admin', { submissions: rows.slice(0, 10), total: items.length, overflow: items.slice(10).length });
 }
 
