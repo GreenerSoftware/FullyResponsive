@@ -33,8 +33,6 @@ export default class FullyresponsiveStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
     // This only needs to be created once per account. If you already have one, you can delete this.
     githubActions(this).ghaOidcProvider();
 
