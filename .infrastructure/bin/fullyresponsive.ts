@@ -17,6 +17,7 @@ const stack = new FullyresponsiveStack(app, 'Fullyresponsive', {
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
   // env: { account: '123456789012', region: 'us-east-1' },
+  description: 'Fully Responsive: this version of the app runs on Lambda. It\'s always available but only uses compute and storage capacity on-demand when requests come in',
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
