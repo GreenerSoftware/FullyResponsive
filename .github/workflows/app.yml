@@ -82,6 +82,7 @@ jobs:
         # Tweak the logo path
         mkdir -p deer-return/naturescot-frontend/assets/images
         cp node_modules/naturescot-frontend/naturescot/assets/images/naturescot-logo.png deer-return/naturescot-frontend/assets/images/naturescot-logo.png
+        cp app/assets/greenersoftware-logo-frontend.png deer-return/naturescot-frontend/assets/images/naturescot-logo.png
 
         # Add missing fonts
         mkdir -p deer-return/naturescot-frontend/assets/fonts
