@@ -70,7 +70,7 @@ const setupAxiosMock = (): string => {
                   },
                   {
                     uprn: 10_092_032_547,
-                    summary_address: 'Naturescot, Naturescot, Great Glen House, Leachkin Road, Inverness, IV3 8NW',
+                    summary_address: 'GreenerSoftware, GreenerSoftware, Great Glen House, Leachkin Road, Inverness, IV3 8NW',
                     matchscore: 100,
                   },
                   {

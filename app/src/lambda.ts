@@ -50,6 +50,10 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     }
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
+
+    // Update the copyright in the footer
+    if (typeof result.body === 'string') result.body = result.body.replace('NatureScot', 'GreenerSoftware');
+
     return result;
   } catch (e) {
     await slackLog(`${(e as Error).stack}`);
