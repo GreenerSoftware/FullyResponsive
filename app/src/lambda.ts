@@ -59,8 +59,11 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       const toReplace = content.substring(logoStart, logoEnd);
       result.body = content.replace(toReplace, ''); // Placeholder for the logo - nothing for now
 
-      // Update the copyright in the footer
+      // Update the copyright under the logo in the footer
       result.body = result.body.replace('NatureScot', 'GreenerSoftware');
+
+      //Update the copyright link in the footer
+      result.body = result.body.replace('www.nature.scot', 'greenersoftware.net');
     }
 
     return result;
