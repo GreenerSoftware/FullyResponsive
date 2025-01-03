@@ -74,20 +74,20 @@ jobs:
       working-directory: ${{ github.workflow }}
       run: |
         # app assets
-        mkdir deer-return
-        cp -r assets deer-return/
-        cp -r node_modules/govuk-frontend deer-return/
-        cp -r node_modules/naturescot-frontend deer-return/
+        mkdir haggis-return
+        cp -r assets haggis-return/
+        cp -r node_modules/govuk-frontend haggis-return/
+        cp -r node_modules/naturescot-frontend haggis-return/
 
         # Tweak the logo path
-        mkdir -p deer-return/naturescot-frontend/assets/images
-        cp node_modules/naturescot-frontend/naturescot/assets/images/naturescot-logo.png deer-return/naturescot-frontend/assets/images/naturescot-logo.png
-        cp app/assets/greenersoftware-logo-frontend.png deer-return/naturescot-frontend/assets/images/naturescot-logo.png
+        mkdir -p haggis-return/naturescot-frontend/assets/images
+        cp node_modules/naturescot-frontend/naturescot/assets/images/naturescot-logo.png haggis-return/naturescot-frontend/assets/images/naturescot-logo.png
+        cp assets/greenersoftware-logo-frontend.png haggis-return/naturescot-frontend/assets/images/naturescot-logo.png
 
         # Add missing fonts
-        mkdir -p deer-return/naturescot-frontend/assets/fonts
-        cp assets/fonts/* deer-return/naturescot-frontend/assets/fonts/
-        aws s3 sync --delete deer-return s3://${bucket}/deer-return/
+        mkdir -p haggis-return/naturescot-frontend/assets/fonts
+        cp assets/fonts/* haggis-return/naturescot-frontend/assets/fonts/
+        aws s3 sync --delete haggis-return s3://${bucket}/haggis-return/
 
     - name: Invalidate Cloudfront
       working-directory: ${{ github.workflow }}

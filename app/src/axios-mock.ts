@@ -1,8 +1,8 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {signMockToken, getMockPrivateJwk} from './server-mock-jwk';
-import {returnsMockData, authorisationTypeMockData} from './mock/returns';
-import {propertyReturnsMockData} from './mock/property-returns';
+import { signMockToken, getMockPrivateJwk } from './server-mock-jwk';
+import { returnsMockData, authorisationTypeMockData } from './mock/returns';
+import { propertyReturnsMockData } from './mock/property-returns';
 
 type MockJwk = {
   kty: string;
@@ -99,7 +99,7 @@ const setupAxiosMock = (): string => {
                   {
                     uprn: 10_091_801_052,
                     summary_address:
-                      'Deer Commission For Scotland, Deer Commission For Scotland, Great Glen House, Leachkin Road, Inverness, IV3 8NW',
+                      'Haggis Commission For Scotland, Haggis Commission For Scotland, Great Glen House, Leachkin Road, Inverness, IV3 8NW',
                     matchscore: 100,
                   },
                   {
@@ -405,19 +405,19 @@ const setupAxiosMock = (): string => {
     .reply(201, propertyReturnsMockData)
 
     .onPost('http://mock-api/endpoint/returns/property-return')
-    .reply(200, {data: {propertyCode: '1'}})
+    .reply(200, { data: { propertyCode: '1' } })
 
     .onGet('http://mock-api/endpoint/authorisation/1/auth-type')
-    .reply(200, {result: authorisationTypeMockData});
+    .reply(200, { result: authorisationTypeMockData });
 
   /* Turn spell checking back on now. spell-checker:enable */
   /* eslint-enable @typescript-eslint/naming-convention */
 
   console.log(`
-    Return Landing Start    --> http://localhost:3305/deer-return/landing-page?token=${mockToken}
+    Return Landing Start    --> http://localhost:3305/haggis-return/landing-page?token=${mockToken}
     `);
 
   return mockToken;
 };
 
-export {setupAxiosMock};
+export { setupAxiosMock };

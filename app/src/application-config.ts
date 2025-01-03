@@ -52,7 +52,7 @@ type ApplicationConfig = {
    */
   underTest: boolean;
 };
-const licenceReferencePrefix = 'DEER-';
+const licenceReferencePrefix = 'HAGGIS-';
 
 export type { ApplicationConfig };
 export { licenceReferencePrefix };

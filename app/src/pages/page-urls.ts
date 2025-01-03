@@ -1,4 +1,4 @@
-export const serviceUrl = '/deer-return';
+export const serviceUrl = '/haggis-return';
 export const welcome = '/welcome';
 export const whatIsYourEmail = '/what-is-your-email';
 export const secureLink = '/secure-link';
@@ -7,7 +7,7 @@ export const landingPage = '/landing-page';
 // Annual cull
 export const whichSpeciesAnnual = '/annual-which-species';
 export const howManySpeciesAnnual = '/annual-how-many-species';
-export const controlFemaleDeer = '/control-female-deer';
+export const controlFemaleDeer = '/control-female-haggis';
 export const diedOfNaturalCauses = '/died-of-natural-causes';
 export const feralPigs = '/feral-pigs';
 export const checkYourAnswersAnnual = '/annual-check-your-answers';

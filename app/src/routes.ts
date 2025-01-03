@@ -45,7 +45,7 @@ export function routes(config: ApplicationConfig): Routes {
     //   GET: async () => ({
     //     statusCode: 302,
     //     headers: {
-    //       Location: '/deer-return/',
+    //       Location: '/haggis-return/',
     //     },
     //     body: '',
     //   })
@@ -54,7 +54,7 @@ export function routes(config: ApplicationConfig): Routes {
       GET: async () => ({
         statusCode: 302,
         headers: {
-          Location: '/deer-return/welcome',
+          Location: '/haggis-return/welcome',
         },
         body: '',
       })
@@ -62,7 +62,7 @@ export function routes(config: ApplicationConfig): Routes {
     '/admin': {
       GET: admin, POST: admin,
     },
-    '/deer-api/v1/returns/property-return': {
+    '/haggis-api/v1/returns/property-return': {
       POST: async (request) => {
         const id = `${random()}${random()}`;
         const timestamp = new Date().toISOString();
@@ -88,27 +88,27 @@ export function routes(config: ApplicationConfig): Routes {
       },
     },
 
-    '/deer-return/health': {
+    '/haggis-return/health': {
       GET: async () => ({
         statusCode: 200,
         body: { message: 'OK' },
       })
     },
 
-    '/deer-return': {
+    '/haggis-return': {
       GET: async () => ({
         statusCode: 302,
         headers: {
-          Location: '/deer-return/submit',
+          Location: '/haggis-return/submit',
         },
         body: '',
       })
     },
-    '/deer-return/': {
+    '/haggis-return/': {
       GET: async () => ({
         statusCode: 302,
         headers: {
-          Location: '/deer-return/submit',
+          Location: '/haggis-return/submit',
         },
         body: '',
       })

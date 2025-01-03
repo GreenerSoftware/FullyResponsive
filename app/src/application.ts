@@ -28,11 +28,11 @@ const application = async (config: ApplicationConfig) => {
     plugin: Yar,
     options: {
       storeBlank: false,
-      name: 'deer-return',
+      name: 'haggis-return',
       cookieOptions: {
         password: config.sessionSecret,
         isSecure: true,
-        path: '/deer-return',
+        path: '/haggis-return',
         isSameSite: 'Strict',
       },
     },
@@ -153,7 +153,7 @@ const application = async (config: ApplicationConfig) => {
 
   // Start the now fully configured HTTP server.
   await server.start();
-  console.log(`Server listening on http://localhost:3305/deer-return`);
+  console.log(`Server listening on http://localhost:3305/haggis-return`);
 };
 
 export { application };

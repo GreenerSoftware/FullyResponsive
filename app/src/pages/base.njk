@@ -12,7 +12,7 @@
       <title>
         {% block pageTitle %}Greener Software{% endblock %}
       </title>
-      <link rel="stylesheet" href="/deer-return/assets/main.css">
+      <link rel="stylesheet" href="/haggis-return/assets/main.css">
     </head>
 
   {% endblock %}
@@ -21,13 +21,13 @@
 
     {{ naturescotHeader({
        homepageUrl: "https://home.greenersoftware.net/",
-       serviceName: "Deer Return",
-       serviceUrl: "/deer-return/"
+       serviceName: "Haggis Return",
+       serviceUrl: "/haggis-return/"
      }) }}
 
     <nav class="govuk-width-container">
 
-      {% set feedbackText %}This is a new service - your feedback will help us to improve it. <a class="govuk-link" href="https://www.surveymonkey.com/r/deer-returns" target="_blank">Complete our survey (opens in new tab).</a>{% endset %}
+      {% set feedbackText %}This is a new service - your feedback will help us to improve it. <a class="govuk-link" href="https://www.surveymonkey.com/r/haggis-returns" target="_blank">Complete our survey (opens in new tab).</a>{% endset %}
 
       {{ govukPhaseBanner({
          tag: {
@@ -37,7 +37,7 @@
        }) }}
 
       {% if backUrl %}
-        <a href="/deer-return{{backUrl}}?action=back" class="govuk-back-link">Back</a>
+        <a href="/haggis-return{{backUrl}}?action=back" class="govuk-back-link">Back</a>
       {% endif %}
 
     </nav>
@@ -54,7 +54,7 @@
     meta: {
       items: [
         {
-          href: "/deer-authorisations/privacy",
+          href: "/haggis-authorisations/privacy",
           text: "Privacy"
         },
         {
@@ -62,7 +62,7 @@
           text: "Cookies"
         },
         {
-          href: "/deer-authorisations/accessibility",
+          href: "/haggis-authorisations/accessibility",
           text: "Accessibility"
         }
       ]

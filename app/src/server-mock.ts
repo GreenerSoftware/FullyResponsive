@@ -1,9 +1,9 @@
 import process from 'node:process';
 import axios from 'axios';
-import {application} from './application';
-import {type ApplicationModel} from './application-model';
-import {type ApplicationConfig} from './application-config';
-import {setupAxiosMock} from './axios-mock';
+import { application } from './application';
+import { type ApplicationModel } from './application-model';
+import { type ApplicationConfig } from './application-config';
+import { setupAxiosMock } from './axios-mock';
 
 /**
  * Determine whether to use a mock model based on command-line arguments.
@@ -40,7 +40,7 @@ const mockApplicationModel: ApplicationModel = {
 setupAxiosMock();
 
 const applicationConfig: ApplicationConfig = {
-  pathPrefix: '/deer-return',
+  pathPrefix: '/haggis-return',
   axios,
   apiEndpoint: 'http://mock-api/endpoint',
   gazetteerApiEndpoint: 'http://mock-gazetteer-api/endpoint',
@@ -61,7 +61,7 @@ if (isMockModelMode) {
 }
 
 console.log(`
-  Application Start --> http://localhost:3305/deer-return/submit
+  Application Start --> http://localhost:3305/haggis-return/submit
   using mock model?: ${isMockModelMode.toString()}
 `);
 

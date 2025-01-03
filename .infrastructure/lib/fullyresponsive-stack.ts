@@ -63,18 +63,18 @@ export default class FullyresponsiveStack extends cdk.Stack {
     // * CLOUDFRONT_DISTRIBUTIONID - for invalidating the Cloudfront cache
     const webApp = WebApp.node(this, 'app', zone, DOMAIN_NAME, false, false, {
       environment: {
-        DEER_API_URL: `https://${DOMAIN_NAME}/deer-api/v1`,
-        DEER_HOST_PREFIX: `https://${DOMAIN_NAME}`,
-        DEER_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
+        HAGGIS_API_URL: `https://${DOMAIN_NAME}/haggis-api/v1`,
+        HAGGIS_HOST_PREFIX: `https://${DOMAIN_NAME}`,
+        HAGGIS_SESSION_SECRET: 'CA<tk~7Y1IxMhITD?5QQ`DacPQM!t6w%', // NB not particularly secret so just for proof of concept. In reality would use an AWS secret. Geberated using https://www.lastpass.com/features/password-generator
         // gazetteerApiEndpoint: process.env.PC_LOOKUP_API_URL ?? '',
-        // feedbackUrl: process.env.DEER_FEEDBACK_URL ?? 'https://www.google.com',
+        // feedbackUrl: process.env.HAGGIS_FEEDBACK_URL ?? 'https://www.google.com',
         // underTest: Boolean(process.env.UNDER_TEST),
         SUBMISSIONS_TABLE: submissions.tableName,
         SLACK_QUEUE_URL: slackQueue.queueUrl,
       },
       functionProps: {
         memorySize: 3008,
-        code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
+        //code: Code.fromBucket(builds, 'app.zip'), // This can be uncommented once you've run a build of the app code
       },
       handler: 'lambda.handler',
     });
@@ -113,7 +113,7 @@ export default class FullyresponsiveStack extends cdk.Stack {
         SLACK_WEBHOOK: process.env.SLACK_WEBHOOK || '',
       },
       functionProps: {
-        code: Code.fromBucket(builds, 'slack.zip'),
+        // code: Code.fromBucket(builds, 'slack.zip'),
       },
     });
     return queue;

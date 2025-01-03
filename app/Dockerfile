@@ -46,9 +46,9 @@ COPY --chown=node:node --from=builder /home/node/assets ./assets
 COPY --chown=node:node --from=builder /home/node/package.json ./
 
 # These variables are for overriding as they only matter during run.
-ENV DEER_SESSION_SECRET override_this_value
-ENV DEER_API_URL override_this_value
-ENV DEER_STAFF_HOST_PREFIX override_this_value
+ENV HAGGIS_SESSION_SECRET override_this_value
+ENV HAGGIS_API_URL override_this_value
+ENV HAGGIS_STAFF_HOST_PREFIX override_this_value
 
 # Let docker know our micro-app always runs on port 3305.
 EXPOSE 3305
