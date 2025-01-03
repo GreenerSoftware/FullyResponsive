@@ -57,7 +57,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       const logoStart = content.indexOf('<svg xmlns="http://www.w3.org/2000/svg"');
       const logoEnd = content.indexOf('</svg>') + 6;
       const toReplace = content.substring(logoStart, logoEnd);
-      result.body = content.replace(toReplace, '*****');
+      result.body = content.replace(toReplace, ''); // Placeholder for the logo - nothing for now
 
       // Update the copyright in the footer
       result.body = result.body.replace('NatureScot', 'GreenerSoftware');
