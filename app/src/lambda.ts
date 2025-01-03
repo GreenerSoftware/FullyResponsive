@@ -51,8 +51,17 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     const rs = routes(config);
     const result = await apiHandler(event, context, rs, errorHandler, undefined, sessionHandler);
 
-    // Update the copyright in the footer
-    if (typeof result.body === 'string') result.body = result.body.replace('NatureScot', 'GreenerSoftware');
+    if (typeof result.body === 'string') {
+      // Remove the svg logo in the header
+      const content = result.body;
+      const logoStart = content.indexOf('<svg xmlns="http://www.w3.org/2000/svg"');
+      const logoEnd = content.indexOf('</svg>') + 6;
+      const toReplace = content.substring(logoStart, logoEnd);
+      result.body = content.replace(toReplace, '*****');
+
+      // Update the copyright in the footer
+      result.body = result.body.replace('NatureScot', 'GreenerSoftware');
+    }
 
     return result;
   } catch (e) {
